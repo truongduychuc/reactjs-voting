@@ -1,0 +1,21 @@
+.section {
+  padding: 70px 0;
+  position: relative;
+  background: $white-color;
+}
+
+.section-full-screen {
+  height: 100vh;
+}
+
+.section-image {
+  @include background-size(cover);
+  background-position: 50%;
+  width: 100%;
+  position: relative;
+
+  .container {
+    z-index: 2;
+    position: relative;
+  }
+}

@@ -1,0 +1,115 @@
+.full-page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  > .content {
+    padding-bottom: 150px;
+    padding-top: 150px;
+    width: 100%;
+  }
+
+  > .content,
+  > .footer {
+    position: relative;
+    z-index: 4;
+  }
+
+  &.section-image {
+    position: static;
+
+    &:after {
+      position: absolute;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      display: block;
+      left: 0;
+      top: 0;
+      content: "";
+      background-color: rgba(0, 0, 0, 0.7);
+    }
+  }
+
+  .full-page-background,
+  &:after {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    display: block;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    @include background-size(cover);
+    background-position: 50%;
+  }
+}
+
+.login-page {
+  .card-login {
+    .logo-container {
+      width: 65px;
+      margin: 0 auto 55px;
+
+      img {
+        width: 100%;
+      }
+    }
+
+    &.card-plain {
+      .input-group {
+        &.no-border {
+          .input-group-prepend {
+            .input-group-text {
+              background-color: hsla(0, 0%, 100%, .1);
+              border: none;
+              color: $white-color;
+              @include transition($general-transition-time, $transition-ease);
+            }
+          }
+        }
+
+        .form-control {
+          background-color: hsla(0, 0%, 100%, .1);
+          border-color: hsla(0, 0%, 100%, .5);
+          color: $white-color;
+
+          &:focus {
+            background-color: hsla(0, 0%, 100%, .2);
+            color: $white-color;
+          }
+        }
+
+        &:last-child {
+          margin-bottom: 40px;
+        }
+
+        &:focus-within {
+          .input-group-prepend,
+          .input-group-append {
+            .input-group-text {
+              background-color: hsla(0, 0%, 100%, .2);
+              color: $white-color;
+            }
+          }
+        }
+      }
+
+      .form-group {
+        &:last-child {
+          margin-bottom: 40px;
+        }
+
+        .input-group {
+          margin-bottom: 10px;
+        }
+
+        .form-error {
+          background-color: transparent;
+          color: $danger-color;
+        }
+      }
+    }
+  }
+}

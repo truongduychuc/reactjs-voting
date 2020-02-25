@@ -1,0 +1,14 @@
+.card {
+  border: 0;
+
+  &.card-plain {
+    background-color: transparent;
+    box-shadow: none;
+
+    .card-header {
+      margin-left: 0;
+      margin-right: 0;
+      background-color: transparent;
+    }
+  }
+}

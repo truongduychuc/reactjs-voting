@@ -1,0 +1,40 @@
+@mixin form-control-placeholder($color, $opacity) {
+  .form-control {
+    &::-moz-placeholder {
+      color: $color;
+      @include opacity(1);
+    }
+
+    &:-moz-placeholder {
+      color: $color;
+      @include opacity(1);
+    }
+
+    &::-webkit-input-placeholder {
+      color: $color;
+      @include opacity(1);
+    }
+
+    &:-ms-input-placeholder {
+      color: $color;
+      @include opacity(1);
+    }
+  }
+}
+
+@mixin placeholder() {
+  &::-moz-placeholder {
+    @content;
+  }
+  &::-webkit-input-placeholder {
+    @content; // safari and chrome
+  }
+
+  &:-ms-input-placeholder {
+    @content; // ie 10+
+  }
+}
+
+@mixin input-size($padding-vertical, $padding-horizontal) {
+  padding: $padding-vertical $padding-horizontal;
+}

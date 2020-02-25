@@ -1,0 +1,27 @@
+@import "./sass/variables";
+@import "~@fortawesome/fontawesome-free/scss/fontawesome";
+@import "~@fortawesome/fontawesome-free/scss/solid";
+@import "~@fortawesome/fontawesome-free/scss/brands";
+@import "~@fortawesome/fontawesome-free/scss/regular";
+@import "~@fortawesome/fontawesome-free/scss/v4-shims.scss";
+@import "~bootstrap/scss/bootstrap-reboot";
+@import "~bootstrap/scss/bootstrap";
+@import "./sass/mixins";
+
+@import "./sass/font";
+@import "./sass/nucleo-outline";
+@import "./sass/base";
+@import "./sass/dropdown";
+@import "./sass/typography";
+@import "./sass/sections";
+@import "./sass/cards";
+@import "./sass/inputs";
+@import "./sass/buttons";
+@import "./sass/forms";
+
+@import "./sass/responsive";
+
+@import "./sass/components/MainPanel";
+@import "./sass/components/Navbar";
+@import "./sass/components/Sidebar";
+@import "./sass/components/Login";

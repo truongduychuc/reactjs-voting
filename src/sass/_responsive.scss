@@ -1,0 +1,110 @@
+@include media-breakpoint-down(md) {
+
+  .profile-photo {
+    .profile-photo-small {
+      margin-left: -2px;
+    }
+  }
+  .button-dropdown {
+    display: none;
+  }
+
+  .navbar {
+    .container-fluid {
+      padding-right: 15px;
+      padding-left: 15px;
+    }
+
+    .navbar-nav {
+
+      .nav-item:first-child {
+        margin-top: 10px;
+      }
+
+      .nav-item:not(:last-child) {
+        margin-bottom: 10px;
+      }
+    }
+
+    .dropdown {
+      .dropdown-menu {
+        display: none;
+      }
+
+      &.show {
+        .dropdown-menu {
+          display: block;
+        }
+      }
+    }
+
+    .dropdown.show, .dropdown {
+      .dropdown-menu {
+        position: static !important;
+        background-color: transparent;
+        border: 0;
+        transition: none;
+        @include box-shadow(none);
+        width: auto;
+        margin: 0 1rem;
+
+        &:before {
+          display: none;
+        }
+      }
+    }
+
+    &.bg-white:not(.navbar-transparent) {
+      .navbar-toggler-bar {
+        background-color: $default-color;
+      }
+    }
+  }
+  .wrapper {
+    @include transition(0.50s, cubic-bezier(0.685, 0.0473, 0.346, 1));
+  }
+  @include sidebar();
+}
+
+@include media-breakpoint-up(md) {
+  .sidebar {
+    display: block;
+    box-shadow: $sidebar-box-shadow;
+  }
+}
+
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) and (orientation: landscape) {
+  @include sidebar();
+
+  .navbar-minimize {
+    display: none;
+  }
+
+  .sidebar {
+    box-shadow: none;
+
+    .nav-open & {
+      box-shadow: $sidebar-box-shadow;
+    }
+  }
+
+  .sidebar,
+  .main-panel,
+  .sidebar-wrapper {
+    -webkit-transition-property: all;
+    -moz-transition-property: all;
+    -ms-transition-property: all;
+    -o-transition-property: all;
+    transition-property: all;
+    -webkit-transition-duration: 0.5s;
+    -moz-transition-duration: 0.5s;
+    -ms-transition-duration: 0.5s;
+    -o-transition-duration: 0.5s;
+    transition-duration: 0.5s;
+    -webkit-transition-timing-function: cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -moz-transition-timing-function: cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -ms-transition-timing-function: cubic-bezier(0.685, 0.0473, 0.346, 1);
+    -o-transition-timing-function: cubic-bezier(0.685, 0.0473, 0.346, 1);
+    transition-timing-function: cubic-bezier(0.685, 0.0473, 0.346, 1);
+  }
+}

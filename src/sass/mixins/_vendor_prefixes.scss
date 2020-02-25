@@ -1,0 +1,461 @@
+@mixin box-sizing($content) {
+  -webkit-box-sizing: $content;
+  -moz-box-sizing: $content;
+  box-sizing: $content;
+}
+
+@mixin box-shadow($color) {
+  -webkit-box-shadow: $color;
+  -moz-box-shadow: $color;
+  box-shadow: $color;
+}
+
+@mixin sidebar-color($color) {
+  &:after {
+    background: $color;
+  }
+
+  .nav {
+    li.active {
+      > a:not([data-toggle='collapse']) {
+        color: $color;
+
+        i {
+          color: $color;
+        }
+      }
+    }
+  }
+}
+
+@mixin transform-translate-x($value) {
+  -webkit-transform: translate3d($value, 0, 0);
+  -moz-transform: translate3d($value, 0, 0);
+  -ms-transform: translate3d($value, 0, 0);
+  -o-transform: translate3d($value, 0, 0);
+  transform: translate3d($value, 0, 0);
+}
+
+@mixin icon-gradient($color, $bottomColor: #000) {
+  background: $color;
+  background: -webkit-linear-gradient($color 0%, $bottomColor 80%);
+  background: -o-linear-gradient($color 0%, $bottomColor 80%);
+  background: -moz-linear-gradient($color 0%, $bottomColor 80%);
+  background: linear-gradient($color 0%, $bottomColor 80%);
+}
+
+@mixin transition($time, $type) {
+  -webkit-transition: all $time $type;
+  -moz-transition: all $time $type;
+  -ms-transition: all $time $type;
+  -o-transition: all $time $type;
+  transition: all $time $type;
+}
+
+@mixin panel-gradient($color) {
+  background: $color;
+  background: linear-gradient(160deg, $color 0%, darken($black-color, 5) 100%);
+  background-size: 105%;
+}
+
+@mixin bar-animation($type) {
+  -webkit-animation: $type 0.5s linear 0s;
+  -o-animation: $type 0.5s linear 0s;
+  animation: $type 0.5s linear 0s;
+  -webkit-animation-fill-mode: forwards;
+  -moz-animation-fill-mode: forwards;
+  -o-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+}
+
+@mixin topbar-x-rotation {
+  @-o-keyframes topbar-x {
+    0% {
+      top: 0;
+      -o-transform: rotate(0);
+    }
+
+    45% {
+      top: 6px;
+      -o-transform: rotate(145deg);
+    }
+    75% {
+      -o-transform: rotate(130deg);
+    }
+    100% {
+      -o-transform: rotate(135deg);
+    }
+  }
+  @-moz-keyframes topbar-x {
+    0% {
+      top: 0;
+      -moz-transform: rotate(0);
+    }
+
+    45% {
+      top: 6px;
+      -moz-transform: rotate(145deg);
+    }
+    75% {
+      -moz-transform: rotate(130deg);
+    }
+    100% {
+      -moz-transform: rotate(135deg);
+    }
+  }
+
+  @-webkit-keyframes topbar-x {
+    0% {
+      top: 0;
+      -webkit-transform: rotate(0);
+    }
+
+    45% {
+      top: 6px;
+      -webkit-transform: rotate(145deg);
+    }
+    75% {
+      -webkit-transform: rotate(130deg);
+    }
+    100% {
+      -webkit-transform: rotate(135deg);
+    }
+  }
+
+  @keyframes topbar-x {
+    0% {
+      top: 0;
+      transform: rotate(0);
+    }
+
+    45% {
+      top: 6px;
+      transform: rotate(145deg);
+    }
+    75% {
+      transform: rotate(130deg);
+    }
+    100% {
+      transform: rotate(135deg);
+    }
+  }
+}
+
+@mixin topbar-back-rotation {
+  @-o-keyframes topbar-back {
+    0% {
+      top: 6px;
+      -o-transform: rotate(135deg);
+    }
+    45% {
+      -o-transform: rotate(-10deg)
+    }
+    75% {
+      -o-transform: rotate(5deg);
+    }
+    100% {
+      top: 0;
+      -o-transform: rotate(0);
+    }
+  }
+  @-ms-keyframes topbar-back {
+    0% {
+      top: 6px;
+      -ms-transform: rotate(135deg);
+    }
+    45% {
+      -ms-transform: rotate(-10deg)
+    }
+    75% {
+      -ms-transform: rotate(5deg);
+    }
+    100% {
+      top: 0;
+      -ms-transform: rotate(0);
+    }
+  }
+
+  @-moz-keyframes topbar-back {
+    0% {
+      top: 6px;
+      -moz-transform: rotate(135deg);
+    }
+    45% {
+      -moz-transform: rotate(-10deg)
+    }
+    75% {
+      -moz-transform: rotate(5deg);
+    }
+    100% {
+      top: 0;
+      -moz-transform: rotate(0);
+    }
+  }
+
+  @-webkit-keyframes topbar-back {
+    0% {
+      top: 6px;
+      -webkit-transform: rotate(135deg);
+    }
+    45% {
+      -webkit-transform: rotate(-10deg)
+    }
+    75% {
+      -webkit-transform: rotate(5deg);
+    }
+    100% {
+      top: 0;
+      -webkit-transform: rotate(0);
+    }
+  }
+
+  @keyframes topbar-back {
+    0% {
+      top: 6px;
+      transform: rotate(135deg);
+    }
+    45% {
+      transform: rotate(-10deg)
+    }
+    75% {
+      transform: rotate(5deg);
+    }
+    100% {
+      top: 0;
+      transform: rotate(0);
+    }
+  }
+}
+
+@mixin bottombar-x-rotation {
+  @-ms-keyframes bottombar-x {
+    0% {
+      bottom: 0;
+      -ms-transform: rotate(0deg);
+    }
+    45% {
+      bottom: 6px;
+      -ms-transform: rotate(-145deg);
+    }
+    75% {
+      -ms-transform: rotate(-130deg);
+    }
+    100% {
+      -ms-transform: rotate(-135deg);
+    }
+  }
+  @-o-keyframes bottombar-x {
+    0% {
+      bottom: 0;
+      -o-transform: rotate(0deg);
+    }
+    45% {
+      bottom: 6px;
+      -o-transform: rotate(-145deg);
+    }
+    75% {
+      -o-transform: rotate(-130deg);
+    }
+    100% {
+      -o-transform: rotate(-135deg);
+    }
+  }
+  @-moz-keyframes bottombar-x {
+    0% {
+      bottom: 0;
+      -moz-transform: rotate(0deg);
+    }
+    45% {
+      bottom: 6px;
+      -moz-transform: rotate(-145deg);
+    }
+    75% {
+      -moz-transform: rotate(-130deg);
+    }
+    100% {
+      -moz-transform: rotate(-135deg);
+    }
+  }
+  @-webkit-keyframes bottombar-x {
+    0% {
+      bottom: 0;
+      -webkit-transform: rotate(0deg);
+    }
+    45% {
+      bottom: 6px;
+      -webkit-transform: rotate(-145deg);
+    }
+    75% {
+      -webkit-transform: rotate(-130deg);
+    }
+    100% {
+      -webkit-transform: rotate(-135deg);
+    }
+  }
+  @keyframes bottombar-x {
+    0% {
+      bottom: 0;
+      transform: rotate(0deg);
+    }
+    45% {
+      bottom: 6px;
+      transform: rotate(-145deg);
+    }
+    75% {
+      transform: rotate(-130deg);
+    }
+    100% {
+      transform: rotate(-135deg);
+    }
+  }
+}
+
+@mixin bottombar-back-rotation {
+  @-o-keyframes bottombar-back {
+    0% {
+      bottom: 6px;
+      -o-transform: rotate(-135deg);
+    }
+    45% {
+      -o-transform: rotate(10deg);
+    }
+    75% {
+      -o-transform: rotate(-5deg);
+    }
+    100% {
+      bottom: 0;
+      -o-transform: rotate(0);
+    }
+  }
+  @-ms-keyframes bottombar-back {
+    0% {
+      bottom: 6px;
+      -ms-transform: rotate(-135deg);
+    }
+    45% {
+      -ms-transform: rotate(10deg);
+    }
+    75% {
+      -ms-transform: rotate(-5deg);
+    }
+    100% {
+      bottom: 0;
+      -ms-transform: rotate(0);
+    }
+  }
+  @-moz-keyframes bottombar-back {
+    0% {
+      bottom: 6px;
+      -moz-transform: rotate(-135deg);
+    }
+    45% {
+      -moz-transform: rotate(10deg);
+    }
+    75% {
+      -moz-transform: rotate(-5deg);
+    }
+    100% {
+      bottom: 0;
+      -moz-transform: rotate(0);
+    }
+  }
+  @-webkit-keyframes bottombar-back {
+    0% {
+      bottom: 6px;
+      -webkit-transform: rotate(-135deg);
+    }
+    45% {
+      -webkit-transform: rotate(10deg);
+    }
+    75% {
+      -webkit-transform: rotate(-5deg);
+    }
+    100% {
+      -webkit-transform: 0;
+      transform: rotate(0);
+    }
+  }
+  @keyframes bottombar-back {
+    0% {
+      bottom: 6px;
+      transform: rotate(-135deg);
+    }
+    45% {
+      transform: rotate(10deg);
+    }
+    75% {
+      transform: rotate(-5deg);
+    }
+    100% {
+      bottom: 0;
+      transform: rotate(0);
+    }
+  }
+}
+
+@mixin fadeIn {
+  @-o-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @-ms-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @-moz-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @-webkit-keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+@mixin transform-translate-y-dropdown($value) {
+  -webkit-transform: translate3d(0, $value, 0) !important;
+  -moz-transform: translate3d(0, $value, 0) !important;
+  -ms-transform: translate3d(0, $value, 0) !important;
+  -o-transform: translate3d(0, $value, 0) !important;
+  transform: translate3d(0, $value, 0) !important;
+}
+
+@mixin background-size($size) {
+  -moz-background-size: $size;
+  -o-background-size: $size;
+  -webkit-background-size: $size;
+  background-size: $size;
+}
+
+@mixin transition-input-focus-color() {
+  -webkit-transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;
+  -moz-transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;
+  -ms-transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;
+  -o-transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;
+  transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;
+}
+

@@ -1,0 +1,135 @@
+@mixin sidebar() {
+  .sidebar,
+  .bootstrap-navbar {
+    position: fixed;
+    display: block;
+    top: 0;
+    height: 100%;
+    width: $sidebar-width;
+    right: auto;
+    left: 0;
+    z-index: 1032;
+    visibility: visible;
+    overflow-y: visible;
+    padding: 0;
+    @include transition(0.50s, cubic-bezier(0.685, 0.0473, 0.346, 1));
+    @include transform-translate-x(-$sidebar-width);
+  }
+
+  @include topbar-x-rotation();
+  @include topbar-back-rotation();
+  @include bottombar-x-rotation();
+  @include bottombar-back-rotation();
+
+  .bar1,
+  .bar2,
+  .bar3 {
+    outline: 1px solid transparent;
+  }
+
+  .bar1 {
+    top: 0;
+    @include bar-animation($topbar-back);
+  }
+
+  .bar2 {
+    opacity: 1;
+  }
+
+  .bar3 {
+    bottom: 0;
+    @include bar-animation($bottombar-back);
+  }
+
+  .nav-open {
+    .main-panel {
+      right: 0;
+      @include transform-translate-x($sidebar-width);
+    }
+
+    .sidebar {
+      @include transform-translate-x(0);
+      box-shadow: $sidebar-box-shadow;
+    }
+
+    .menu-on-right {
+      .main-panel {
+        @include transform-translate-x(-$sidebar-width);
+      }
+
+      .navbar-collapse,
+      .sidebar {
+        @include transform-translate-x(0);
+      }
+
+      .navbar-translate {
+        @include transform-translate-x(-300px);
+      }
+    }
+  }
+
+  .menu-on-right {
+    left: auto;
+    right: 0;
+    @include transform-translate-x($sidebar-width);
+  }
+
+  .navbar {
+    .toggled {
+
+      .bar1 {
+        top: 6px;
+        @include bar-animation($topbar-x);
+      }
+
+      .bar2 {
+        opacity: 0;
+      }
+
+      .bar3 {
+        bottom: 6px;
+        @include bar-animation($bottombar-x);
+      }
+
+      .navbar-toggler-bar {
+        width: 24px;
+
+        & + .navbar-toggler-bar {
+          margin-top: 5px;
+        }
+      }
+    }
+  }
+
+  .navbar-toggle {
+    &, .navbar-toggler {
+      display: block !important;
+    }
+  }
+
+  .navbar-toggler-bar {
+    display: block;
+    position: relative;
+    width: 22px;
+    height: 1px;
+    border-radius: 1px;
+    background: $white-bg;
+
+    & + .navbar-toggler-bar {
+      margin-top: 7px;
+
+      &.navbar-kebab {
+        margin-top: 3px !important;
+      }
+    }
+
+    &.bar2 {
+      width: 17px;
+      transition: width .2s linear;
+    }
+
+  }
+  .main-panel {
+    width: 100%;
+  }
+}
