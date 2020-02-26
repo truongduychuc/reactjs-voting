@@ -6,7 +6,7 @@ let initialState = Ls.get('auth.access') ? {
   payload: {
     access: Ls.get('auth.access')
   }
-} : {authenticated: false};
+} : {authenticated: false, payload: {access: ''}};
 initialState = {...initialState, ...{loggingIn: false}};
 
 export const authentication = (state = initialState, action) => {

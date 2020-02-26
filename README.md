@@ -1,5 +1,6 @@
 <h1>
 React Voting System
+</h1>
 <p>Copyright: Chuc (Gray) D. TRUONG (client) & Dinh (Roger) Q. LE (server) </p>
 <p>This project comes along with Laravel server</p>
 <p>Original project repository is linked here:
@@ -7,7 +8,6 @@ React Voting System
   lequydinh/voting_project
   </a>
 </p>
-</h1>
 
 ### Summary
 #### Used libraries

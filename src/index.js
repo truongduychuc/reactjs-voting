@@ -14,6 +14,23 @@ const store = createStore(
     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
   )
 );
+global.axios = require('axios');
+global.axios.interceptors.request.use(function (config) {
+  // Do something before request is sent
+  const AUTH_TOKEN = store.getState().authentication.payload.access;
+  if (AUTH_TOKEN) {
+    config.headers.common['Authorization'] = `Bearer ${AUTH_TOKEN}`
+  }
+  return config;
+}, function (error) {
+  // Do something with request error
+  return Promise.reject(error)
+});
+
+global.axios.defaults.headers.common = {
+  'X-Requested-With': 'XMLHttpRequest'
+};
+
 const AppWithStore = () => (
   <Provider store={store}>
     <App/>

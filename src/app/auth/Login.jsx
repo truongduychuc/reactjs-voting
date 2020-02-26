@@ -24,6 +24,8 @@ import {
   Row
 } from 'reactstrap';
 import { connect } from "react-redux";
+import { authService } from "./services";
+import { useHistory } from "react-router";
 
 
 const Login = ({loggingIn}) => {
@@ -38,9 +40,17 @@ const Login = ({loggingIn}) => {
     email: string().email().required('Email is required'),
     password: string().required('Password is required')
   });
-  const submitHandler = ({email, password}, {setStatus, setSubmitting}) => {
+  const history = useHistory();
+  const submitHandler = ({email, password}, {setStatus, setSubmitting, setErrors}) => {
     setStatus();
     setSubmitting(true);
+    authService.login(email, password).then(() => {
+      history.push('/')
+    }).catch(err => {
+      setSubmitting(false);
+      setStatus(false);
+      setErrors(err);
+    })
   };
   return (
     <div className="wrapper">
