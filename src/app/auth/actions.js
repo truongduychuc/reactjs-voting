@@ -1,20 +1,20 @@
-import { authActionTypes } from "./types";
-import { authService } from "./services";
+import {authActionTypes} from "./types";
+import {authService} from "./services";
 
 export const authActions = {
-  login(email, password) {
-    return dispatch => {
-      dispatch(request());
-      authService.login(email, password).then(payload => {
-        dispatch(success(payload));
-      }).catch(err => {
-        dispatch(failure(err));
-      })
+    login(email, password) {
+        return dispatch => {
+            dispatch(request());
+            authService.login(email, password).then(payload => {
+                dispatch(success(payload));
+            }).catch(err => {
+                dispatch(failure(err));
+            })
+        }
+    },
+    logout() {
+        authService.logout();
     }
-  },
-  logout() {
-    authService.logout();
-  }
 };
 
 // action creators

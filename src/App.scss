@@ -19,9 +19,6 @@
 @import "./sass/buttons";
 @import "./sass/forms";
 
-@import "./sass/responsive";
+@import "./sass/components";
 
-@import "./sass/components/MainPanel";
-@import "./sass/components/Navbar";
-@import "./sass/components/Sidebar";
-@import "./sass/components/Login";
+@import "./sass/responsive";

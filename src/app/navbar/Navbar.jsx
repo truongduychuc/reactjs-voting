@@ -3,140 +3,158 @@
  using WebStorm at
  20:37 on 23-Feb-20
  */
-import React, { useEffect, useRef, useState } from "react";
-import '../../sass/components/Navbar.scss';
+import React from "react";
 import {
-  Collapse,
-  Container,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownToggle,
-  Nav,
-  Navbar,
-  NavbarBrand,
-  NavbarToggler
+    Collapse,
+    Container,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    DropdownToggle,
+    Nav,
+    Navbar,
+    NavbarBrand,
+    NavbarToggler
 } from 'reactstrap';
-import { useHistory, useLocation } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { routes } from "../../routes";
-import { usePrevious, useWindowResizeListener } from "../../hooks";
+import dom from "../../_helpers/dom";
 
-const DemoNavbar = ({sidebarCallback, wrapperRef}) => {
-  const [color, setColor] = useState('transparent');
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [isOpen, setOpen] = useState(false);
 
-  const sidebarToggle = useRef(null);
-  const location = useLocation();
-  const history = useHistory();
-  const foundFullScrMap = location.pathname.includes('full-screen-maps');
-  const className = foundFullScrMap ? 'navbar-absolute fixed-top' : 'navbar-absolute fixed-top ' +
-    (color === 'transparent' ? 'navbar-transparent' : '');
-
-  const openSidebar = () => {
-    sidebarToggle.current.classList.toggle('toggled');
-    sidebarCallback();
-  };
-  const dropdownToggle = () => {
-    setDropdownOpen(state => !state);
-  };
-  const toggle = () => {
-    setColor(() => isOpen ? 'transparent' : 'white');
-    setOpen(isOpen => !isOpen);
-  };
-  const previousHistory = usePrevious(history);
-  const getBrand = () => {
-    let name;
-    routes.map(prop => {
-      if (prop.collapse) {
-        prop.views.map(propC => {
-          if (propC.path === this.props.location.pathname) {
-            name = prop.name;
-          }
-          return null;
-        });
-      } else {
-        if (prop.redirect) {
-          if (prop.path === this.props.location.pathname) {
-            name = prop.name;
-          }
-        } else {
-          if (prop.path === this.props.location.pathname) {
-            name = prop.name;
-          }
-        }
-      }
-      return null;
-    });
-    return name || null;
-  };
-
-  const {width} = useWindowResizeListener();
-
-  useEffect(() => {
-    window.onresize = () => {
-      const LIMIT = 993;
-      setColor(() => (width < LIMIT && isOpen) ? 'white' : 'transparent');
+class DemoNavbar extends React.Component {
+    state = {
+        color: 'transparent',
+        isOpen: false,
+        dropdownOpen: false
     };
-  }, [width, isOpen]);
-  useEffect(() => {
-    // this is probably called right after the resize event executed
-    const MEDIA_LG = 993; // large size of screen
-    const isNavOpening = wrapperRef.current.className.includes('nav-open');
-    if (width < MEDIA_LG && previousHistory.location.pathname !== location.pathname && isNavOpening) {
-      sidebarToggle.current.classList.toggle('toggled');
-      wrapperRef.current.classList.toggle('nav-open');
+    sidebarToggle = React.createRef();
+
+    componentDidMount() {
+        window.onresize = this.updateColor;
     }
-  });
-  return (
-    <Navbar
-      color={color}
-      expand="lg"
-      className={className}
-    >
-      <Container fluid>
-        <div className="navbar-wrapper">
-          <div className="navbar-toggle">
-            <button
-              type="button"
-              ref={sidebarToggle}
-              className="navbar-toggler"
-              onClick={openSidebar}
+
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        // this is probably called right after the resize event executed
+        // close sidebar whenever the routing changes
+        const width = dom.getWindowInnerWidth();
+        const MEDIA_LG = 993; // large size of screen
+        const isNavOpening = this.props.wrapperRef.current.className.includes('nav-open');
+        if (width < MEDIA_LG && prevProps.location.pathname !== this.props.location.pathname && isNavOpening) {
+            this.sidebarToggle.current.classList.toggle('toggled');
+            this.props.wrapperRef.current.classList.toggle('nav-open');
+        }
+    }
+
+    render() {
+        const {color, isOpen, dropdownOpen} = this.state;
+        const {location} = this.props;
+        const foundFullScrMap = location.pathname.includes('full-screen-maps');
+        const className = foundFullScrMap ? 'navbar-absolute fixed-top' : 'navbar-absolute fixed-top ' +
+            (this.state.color === 'transparent' ? 'navbar-transparent' : '');
+        return (
+            <Navbar
+                color={color}
+                expand="lg"
+                className={className}
             >
-              <span className="navbar-toggler-bar bar1"/>
-              <span className="navbar-toggler-bar bar2"/>
-              <span className="navbar-toggler-bar bar3"/>
-            </button>
-          </div>
-          <NavbarBrand href="/">{getBrand()}</NavbarBrand>
-        </div>
-        <NavbarToggler onClick={toggle}>
-          <span className="navbar-toggler-bar navbar-kebab"/>
-          <span className="navbar-toggler-bar navbar-kebab"/>
-          <span className="navbar-toggler-bar navbar-kebab"/>
-        </NavbarToggler>
-        <Collapse isOpen={isOpen} navbar className="justify-content-end">
-          <Nav navbar>
-            <Dropdown
-              nav
-              isOpen={dropdownOpen}
-              toggle={dropdownToggle}
-            >
-              <DropdownToggle caret nav>
-                <i className="now-ui-icons users_single-02"/>
-                <p>
-                  <span className="d-lg-none d-md-block">User</span>
-                </p>
-              </DropdownToggle>
-              <DropdownMenu right>
-                <DropdownItem tag="a">Profile</DropdownItem>
-                <DropdownItem tag="a">Log out</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </Nav>
-        </Collapse>
-      </Container>
-    </Navbar>
-  );
-};
-export default DemoNavbar;
+                <Container fluid>
+                    <div className="navbar-wrapper">
+                        <div className="navbar-toggle">
+                            <button
+                                type="button"
+                                ref={this.sidebarToggle}
+                                className="navbar-toggler"
+                                onClick={this.openSidebar}
+                            >
+                                <span className="navbar-toggler-bar bar1"/>
+                                <span className="navbar-toggler-bar bar2"/>
+                                <span className="navbar-toggler-bar bar3"/>
+                            </button>
+                        </div>
+                        <NavbarBrand href="/">{this.getBrand()}</NavbarBrand>
+                    </div>
+                    <NavbarToggler onClick={this.toggle}>
+                        <span className="navbar-toggler-bar navbar-kebab"/>
+                        <span className="navbar-toggler-bar navbar-kebab"/>
+                        <span className="navbar-toggler-bar navbar-kebab"/>
+                    </NavbarToggler>
+                    <Collapse isOpen={isOpen} navbar className="justify-content-end">
+                        <Nav navbar>
+                            <Dropdown
+                                nav
+                                isOpen={dropdownOpen}
+                                toggle={this.dropdownToggle}
+                            >
+                                <DropdownToggle caret nav>
+                                    <i className="now-ui-icons users_single-02"/>
+                                    <p>
+                                        <span className="d-lg-none d-md-block">User</span>
+                                    </p>
+                                </DropdownToggle>
+                                <DropdownMenu right>
+                                    <DropdownItem tag="a">Profile</DropdownItem>
+                                    <DropdownItem tag="a">Log out</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </Nav>
+                    </Collapse>
+                </Container>
+            </Navbar>
+        );
+    }
+
+    updateColor = () => {
+        const {isOpen} = this.state;
+        const width = dom.getWindowInnerWidth();
+        const LIMIT = 993;
+        this.setState({
+            color: (width < LIMIT && isOpen) ? 'white' : 'transparent'
+        });
+    };
+    openSidebar = () => {
+        this.sidebarToggle.current.classList.toggle('toggled');
+        this.props.sidebarCallback();
+    };
+    dropdownToggle = () => {
+        this.setState({
+            dropdownOpen: !this.state.dropdownOpen
+        });
+    };
+    toggle = () => {
+        const {isOpen} = this.state;
+        this.setState({
+            color: isOpen ? 'transparent' : 'white'
+        });
+        this.setState({
+            isOpen: !isOpen
+        })
+    };
+    getBrand = () => {
+        const {location} = this.props;
+        let name;
+        routes.map(prop => {
+            if (prop.collapse) {
+                prop.views.map(propC => {
+                    if (propC.path === location.pathname) {
+                        name = prop.name;
+                    }
+                    return null;
+                });
+            } else {
+                if (prop.redirect) {
+                    if (prop.path === location.pathname) {
+                        name = prop.name;
+                    }
+                } else {
+                    if (prop.path === location.pathname) {
+                        name = prop.name;
+                    }
+                }
+            }
+            return null;
+        });
+        return name || null;
+    };
+}
+
+export default withRouter(DemoNavbar);
