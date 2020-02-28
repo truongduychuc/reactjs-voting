@@ -9,25 +9,27 @@ import backGroundImg from '../../assets/img/bg14.6cdd0e88.jpg';
 import logoLogin from '../../assets/img/logo-login.png';
 import { Field, Form, Formik } from 'formik';
 import {
-    Button,
-    Card,
-    CardBody,
-    CardFooter,
-    CardHeader,
-    Col,
-    Container,
-    FormGroup,
-    Input,
-    InputGroup,
-    InputGroupAddon,
-    InputGroupText,
-    Row
+  Button,
+  Card,
+  CardBody,
+  CardFooter,
+  CardHeader,
+  Col,
+  Container,
+  FormGroup,
+  Input,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  Row
 } from 'reactstrap';
 import { connect } from "react-redux";
 import { authActions } from "./actions";
+import { bindActionCreators } from "redux";
+import { useHistory } from "react-router";
 
 
-const Login = ({loggingIn, dispatch, authenticated, history}) => {
+const Login = ({loggingIn, authenticated, ...props}) => {
   const [credential] = useState({
     email: '',
     password: '',
@@ -42,8 +44,23 @@ const Login = ({loggingIn, dispatch, authenticated, history}) => {
   const submitHandler = ({email, password}, {setStatus, setSubmitting, setErrors}) => {
     setStatus();
     setSubmitting(true);
-    dispatch(authActions.login(email, password));
+    props.login(email, password);
   };
+
+  useEffect(() => {
+    props.logout();
+    // eslint-disable-next-line
+  }, []);
+
+  const history = useHistory();
+
+  useEffect(() => {
+    if (authenticated) {
+      history.push('/');
+    }
+    // eslint-disable-next-line
+  }, [authenticated]);
+
   return (
     <div className="wrapper">
       <div className="full-page section-image">
@@ -142,6 +159,13 @@ const Login = ({loggingIn, dispatch, authenticated, history}) => {
     </div>
   );
 };
-const mapStateToProps = (state) => ({loggingIn: state.authentication.loggingIn, authenticated: state.authentication.authenticated});
-const connectedLoginPage = connect(mapStateToProps)(Login);
+const mapStateToProps = state => ({
+  loggingIn: state.authentication.loggingIn,
+  authenticated: state.authentication.authenticated
+});
+const mapDispatchToProps = dispatch => bindActionCreators({
+  login: (email, password) => authActions.login(email, password),
+  logout: () => authActions.logout()
+}, dispatch);
+const connectedLoginPage = connect(mapStateToProps, mapDispatchToProps)(Login);
 export default connectedLoginPage;

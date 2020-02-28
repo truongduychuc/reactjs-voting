@@ -18,7 +18,11 @@ function login(email, password) {
 }
 
 function logout() {
-    authService.logout();
+    console.log('Called');
+    return dispatch => {
+        authService.logout();
+        dispatch(logoutStore());
+    };
 }
 
 // action creators

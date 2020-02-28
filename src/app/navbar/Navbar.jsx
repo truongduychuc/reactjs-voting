@@ -19,6 +19,8 @@ import {
 import { withRouter } from 'react-router-dom';
 import { routes } from "../../routes";
 import { dom } from "../../_helpers";
+import { authActions } from "../auth";
+import { connect } from "react-redux";
 
 
 class DemoNavbar extends React.Component {
@@ -43,11 +45,16 @@ class DemoNavbar extends React.Component {
       this.sidebarToggle.current.classList.toggle('toggled');
       this.props.wrapperRef.current.classList.toggle('nav-open');
     }
+
+    const {authenticated, history} = this.props;
+    if (!authenticated) {
+      history.push('/auth/login');
+    }
   }
 
   render() {
     const {color, isOpen, dropdownOpen} = this.state;
-    const {location} = this.props;
+    const {location, logout} = this.props;
     const foundFullScrMap = location.pathname.includes('full-screen-maps');
     const className = foundFullScrMap ? 'navbar-absolute fixed-top' : 'navbar-absolute fixed-top ' +
       (this.state.color === 'transparent' ? 'navbar-transparent' : '');
@@ -92,8 +99,12 @@ class DemoNavbar extends React.Component {
                   </p>
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem tag="a">Profile</DropdownItem>
-                  <DropdownItem tag="a">Log out</DropdownItem>
+                  <DropdownItem tag="a" to="/admin/user-profile">
+                    Profile
+                  </DropdownItem>
+                  <DropdownItem onClick={() => {
+                    logout();
+                  }}>Log out</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </Nav>
@@ -157,4 +168,9 @@ class DemoNavbar extends React.Component {
   };
 }
 
-export default withRouter(DemoNavbar);
+const mapStateToProps = state => ({authenticated: state.authentication.authenticated});
+const mapDispatchToProps = dispatch => ({logout: authActions.logout});
+
+const connectedNavbar = connect(mapStateToProps, mapDispatchToProps)(DemoNavbar);
+
+export default withRouter(connectedNavbar);
