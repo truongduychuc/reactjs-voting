@@ -52,7 +52,7 @@ const AdminLayout = (props) => {
                                 key={key}
                             />
                         ))}
-                    <Redirect from="admin" to="/admin/dashboard"/>
+                    <Redirect from="/admin" to="/admin/dashboard"/>
                 </Switch>
             </div>
         </div>

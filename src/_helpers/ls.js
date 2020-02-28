@@ -1,4 +1,4 @@
-const Ls = {
+export const Ls = {
     get(key) {
         const item = localStorage.getItem(key);
         return item ? item : null;
@@ -17,4 +17,3 @@ const Ls = {
         localStorage.setItem(key, JSON.stringify(item));
     }
 };
-export default Ls;

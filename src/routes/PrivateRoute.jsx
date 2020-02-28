@@ -5,7 +5,7 @@
  */
 import React from 'react';
 import {Redirect, Route} from 'react-router-dom';
-import Ls from "../_helpers/ls";
+import {Ls} from "../_helpers";
 
 const PrivateRoute = ({component: Component, children, ...rest}) => (
     <Route
