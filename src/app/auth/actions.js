@@ -18,10 +18,12 @@ function login(email, password) {
 }
 
 function logout() {
-    console.log('Called');
     return dispatch => {
-        authService.logout();
-        dispatch(logoutStore());
+        return authService.logout().catch(() => {
+            // TODO - may dispatch error here
+        }).finally(() => {
+            dispatch(logoutStore());
+        })
     };
 }
 

@@ -48,7 +48,9 @@ const Login = ({loggingIn, authenticated, ...props}) => {
   };
 
   useEffect(() => {
-    props.logout();
+    if (authenticated) {
+      props.logout();
+    }
     // eslint-disable-next-line
   }, []);
 

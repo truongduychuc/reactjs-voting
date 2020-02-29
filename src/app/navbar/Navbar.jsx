@@ -21,6 +21,7 @@ import { routes } from "../../routes";
 import { dom } from "../../_helpers";
 import { authActions } from "../auth";
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 
 
 class DemoNavbar extends React.Component {
@@ -30,26 +31,34 @@ class DemoNavbar extends React.Component {
     dropdownOpen: false
   };
   sidebarToggle = React.createRef();
+  _isMounted = false;
 
   componentDidMount() {
     window.onresize = this.updateColor;
+    this._isMounted = true;
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     // this is probably called right after the resize event executed
     // close sidebar whenever the routing changes
-    const width = dom.getWindowInnerWidth();
-    const MEDIA_LG = 993; // large size of screen
-    const isNavOpening = this.props.wrapperRef.current.className.includes('nav-open');
-    if (width < MEDIA_LG && prevProps.location.pathname !== this.props.location.pathname && isNavOpening) {
-      this.sidebarToggle.current.classList.toggle('toggled');
-      this.props.wrapperRef.current.classList.toggle('nav-open');
-    }
+    if (this._isMounted) {
+      const width = dom.getWindowInnerWidth();
+      const MEDIA_LG = 993; // large size of screen
+      const isNavOpening = this.props.wrapperRef.current.className.includes('nav-open');
+      if (width < MEDIA_LG && prevProps.location.pathname !== this.props.location.pathname && isNavOpening) {
+        this.sidebarToggle.current.classList.toggle('toggled');
+        this.props.wrapperRef.current.classList.toggle('nav-open');
+      }
 
-    const {authenticated, history} = this.props;
-    if (!authenticated) {
-      history.push('/auth/login');
+      const {authenticated, history} = this.props;
+      if (!authenticated) {
+        history.push('/auth/login');
+      }
     }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   render() {
@@ -169,7 +178,9 @@ class DemoNavbar extends React.Component {
 }
 
 const mapStateToProps = state => ({authenticated: state.authentication.authenticated});
-const mapDispatchToProps = dispatch => ({logout: authActions.logout});
+const mapDispatchToProps = dispatch => bindActionCreators({
+  logout: () => authActions.logout()
+}, dispatch);
 
 const connectedNavbar = connect(mapStateToProps, mapDispatchToProps)(DemoNavbar);
 
