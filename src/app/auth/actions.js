@@ -3,28 +3,39 @@ import { authService } from "./services";
 
 export const authActions = {
   login,
-  logout
+  logout,
+  refresh
 };
 
 function login(email, password) {
-    return dispatch => {
-        dispatch(request());
-        return authService.login(email, password).then(payload => {
-            dispatch(success(payload));
-        }).catch(err => {
-            dispatch(failure(err));
-        })
-    }
+  return dispatch => {
+    dispatch(request());
+    return authService.login(email, password).then(payload => {
+      dispatch(success(payload));
+    }).catch(err => {
+      dispatch(failure(err));
+    })
+  }
 }
 
 function logout() {
-    return dispatch => {
-        return authService.logout().catch(() => {
-            // TODO - may dispatch error here
-        }).finally(() => {
-            dispatch(logoutStore());
-        })
-    };
+  return dispatch => {
+    return authService.logout().catch(() => {
+      // TODO - may dispatch error here
+    }).finally(() => {
+      dispatch(logoutStore());
+    })
+  };
+}
+
+function refresh(refreshToken) {
+  return dispatch => {
+    return authService.refresh(refreshToken).then(payload => {
+      dispatch(success(payload));
+    }).catch(err => {
+      dispatch(failure(err));
+    })
+  }
 }
 
 // action creators

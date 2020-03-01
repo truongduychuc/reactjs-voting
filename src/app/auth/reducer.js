@@ -2,9 +2,9 @@ import { authActionTypes } from "./types";
 import { Ls } from "../../_helpers";
 
 const initialPayload = {
-  access: Ls.get('auth.access') ? Ls.get('auth.access') : '',
-  refresh: Ls.get('auth.refresh') ? Ls.get('auth.refresh') : '',
-  expiresAt: Ls.get('auth.expires_at') ? Number(Ls.get('auth.expires_at')) : 0
+  access: !!Ls.get('auth.access') ? Ls.get('auth.access') : '',
+  refresh: !!Ls.get('auth.refresh') ? Ls.get('auth.refresh') : '',
+  expiresIn: !!Ls.get('auth.expires_in') ? Number(Ls.get('auth.expires_in')) : 0
 };
 const initialState = {
   authenticated: !!Ls.get('auth.access'),
@@ -16,7 +16,7 @@ const emptyState = {
   payload: {
     access: '',
     refresh: '',
-    expiresAt: ''
+    expiresIn: ''
   },
   loggingIn: false
 };
