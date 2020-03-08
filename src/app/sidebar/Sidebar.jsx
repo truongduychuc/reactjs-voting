@@ -34,7 +34,7 @@ const Sidebar = ({backgroundColor, routes}) => {
             </div>
             <div className="sidebar-wrapper" ref={sidebarRef}>
                 <Nav>
-                    {routes.map(({layout, path, redirect, icon, name}, key) => {
+                    {routes.filter(route => route.haveLinks.sidebar).map(({layout, path, redirect, icon, name}, key) => {
                         if (redirect) {
                             return null;
                         }

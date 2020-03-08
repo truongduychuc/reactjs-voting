@@ -1,0 +1,4 @@
+export const userActionTypes = {
+  REQUEST_USER_LIST: 'REQUEST_USER_LIST',
+  SUCCESS_GET_USER_LIST: 'SUCCESS_GET_USER_LIST'
+};

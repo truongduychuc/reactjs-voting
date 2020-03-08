@@ -75,3 +75,72 @@
     top: 1px;
   }
 }
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: $switch-btn-width-md;
+  max-height: 100%;
+  height: $switch-btn-height-md;
+  margin: 0;
+
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+
+    &:checked + .slider {
+      background-color: #2196F3;
+
+      &:before {
+        @include transform-translate-x($switch-slider-toggle-size - 2);
+      }
+    }
+    &:focus + .slider {
+      @include box-shadow(0 0 1px #2196F3);
+    }
+  }
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    @include transition(.4s, ease);
+
+    &:before {
+      position: absolute;
+      content: "";
+      height: $switch-slider-toggle-size;
+      width: $switch-slider-toggle-size;
+      left: 3px;
+      bottom: 2.4px;
+      background-color: white;
+      @include transition(.4s, ease);
+    }
+
+    &.round {
+      border-radius: 34px;
+
+      &:before {
+        border-radius: 50%;
+      }
+    }
+  }
+  .sw-lg {
+    width: $switch-btn-width-lg;
+    height: $switch-btn-height-lg;
+
+    .slider:before {
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+    }
+    input:checked + .slider:before {
+      @include transform-translate-x(26px);
+    }
+  }
+}

@@ -28,3 +28,10 @@
     padding: $padding-vertical - 1 $padding-horizontal - 1;
   }
 }
+@mixin table-btn-link() {
+  td {
+    .btn-link {
+      padding: 0;
+    }
+  }
+}
