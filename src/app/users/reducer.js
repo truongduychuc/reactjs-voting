@@ -2,9 +2,14 @@ import { userActionTypes } from "./types";
 
 const initialState = {
   requesting: false,
-  users: []
+  users: [],
+  meta: {
+    page: 1,
+    per_page: 10
+  }
 };
-export const users = (state = initialState, action) => {
+
+export const usersReducer = (state = initialState, action) => {
   switch (action.type) {
     case userActionTypes.REQUEST_USER_LIST:
       return {
@@ -14,11 +19,12 @@ export const users = (state = initialState, action) => {
         }
       };
 
-    case userActionTypes.UPDATE_USER_LIST:
+    case userActionTypes.SUCCESS_GET_USER_LIST:
       return {
         ...state,
         ...{
-          users: action.data
+          users: action.users,
+          meta: action.meta
         }
       };
     default:

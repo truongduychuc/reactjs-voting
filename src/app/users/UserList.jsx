@@ -12,7 +12,7 @@ const UserList = () => {
     per_page: 10,
     page: 1
   });
-  const isMountedRef = useIsMountedRef();
+
   const tableFields = [
     {
       key: 'id',
@@ -48,18 +48,25 @@ const UserList = () => {
       }
     })
   };
-
+  const isMountedRef = useIsMountedRef();
   useEffect(() => {
+    getUserList();
+    // eslint-disable-next-line
+  }, [meta.page, isMountedRef]);
+
+  const getUserList = () => {
     apiService.get('http://localhost:8000/api/users', meta)
       .then(res => {
-        const {data, meta: serverMeta } = res;
-        setUsers(data);
-        setMeta(m => ({
-          ...meta,
-          ...serverMeta
-        }))
-      })
-  }, [isMountedRef, meta.page]);
+        if (isMountedRef.current) {
+          const {data, meta: serverMeta} = res;
+          setUsers(data);
+          setMeta(m => ({
+            ...meta,
+            ...serverMeta
+          }))
+        }
+      });
+  };
   const {total: totalRows, per_page: perPage} = meta;
   return (
     <>
