@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, CardBody, CardHeader, CardTitle, Table } from 'reactstrap';
+import { Card, CardBody, CardHeader, CardTitle, Table } from 'reactstrap';
 import PanelHeader from "../panel-header/PanelHeader";
 import apiService from "../../services/api";
 import { ModelPagination, SwitchButton } from "../components";
 import confirmService from '../../services/confirm-service';
 import { useIsMountedRef } from "../../hooks";
+import { Link } from "react-router-dom";
 
 const UserList = () => {
   const [users, setUsers] = useState([]);
@@ -135,6 +136,7 @@ const TableRow = ({fields, item, rowIndex}) => (
           case 'actions':
             return (
               <ActionsCell
+                id={item.id}
                 key={`row_col${rowIndex}_${colID}`}
               />
             );
@@ -161,19 +163,17 @@ const StatusCell = ({status}) => (
 const StandardCell = ({value}) => (
   <td>{value}</td>
 );
-const ActionsCell = () => (
+const ActionsCell = ({id}) => (
   <td>
-    <Button
-      color="link"
-    >
+    <Link to={`users/${id}`}>
       Details
-    </Button>
+    </Link>
   </td>
 );
 
 const onChange = (currentValue) => {
   confirmService.show().then(result => {
-    window.alert(result);
+
   });
 };
 export default UserList;

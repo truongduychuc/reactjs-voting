@@ -2,7 +2,7 @@ body {
   @include box-sizing(border-box);
   color: $black-color;
   font-size: $font-size-base;
-  font-family: $sans-serif-family;
+  font-family: 'Nunito Sans', sans-serif;
   -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
 }

@@ -18,10 +18,20 @@ const history = createBrowserHistory();
 const App = () => (
     <Router history={history}>
         <Switch>
-            <PrivateRoute path="/admin" component={AdminLayout}/>
-            <Route path="/auth/login" component={Login}/>
-            <Redirect from="/" to="/admin"/>
-            <Route component={NotFound}/>
+          <PrivateRoute
+            path="/vt"
+            component={AdminLayout}
+          />
+          <Route
+            path="/auth/login"
+            component={Login}
+          />
+          <Route exact path="/">
+            <Redirect to="/vt"/>
+          </Route>
+          <Route path="*">
+            <NotFound/>
+          </Route>
         </Switch>
     </Router>
 );

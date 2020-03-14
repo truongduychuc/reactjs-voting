@@ -17,6 +17,7 @@ const PrivateRoute = ({component: Component, children, authenticated, ...rest}) 
           <Component {...routeProps}/>
         ) : (
           <Redirect
+            exact
             to={{
               pathname: '/auth/login',
               state: {from: routeProps.location}
