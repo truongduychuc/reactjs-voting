@@ -20,7 +20,7 @@ const UserList = () => {
       label: '#'
     },
     {
-      key: 'full_name',
+      key: 'display_name',
       label: 'Name'
     },
     {
@@ -140,6 +140,12 @@ const TableRow = ({fields, item, rowIndex}) => (
                 key={`row_col${rowIndex}_${colID}`}
               />
             );
+          case 'id' :
+            return (
+              <StandardCell
+                key={`row_col${rowIndex}_${colID}`}
+                value={rowIndex + 1}
+              />);
           default:
             return (
               <StandardCell

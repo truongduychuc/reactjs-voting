@@ -58,6 +58,8 @@
     }
 
     &.card-plain {
+      @include form-control-placeholder($white-color, 1);
+
       .input-group {
         &.no-border {
           .input-group-prepend {

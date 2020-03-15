@@ -9,8 +9,11 @@ import { routes } from "../../routes";
 import DemoNavbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 import { usePrevious } from "../../hooks";
+import { bindActionCreators } from "redux";
+import { userActions } from "../users";
+import { connect } from 'react-redux';
 
-const AdminLayout = (props) => {
+const AdminLayout = ({getCurrentUser, ...props}) => {
   const mainPanelRef = useRef(null);
   const wrapperRef = useRef(null);
   const [backgroundColor] = useState('blue');
@@ -33,6 +36,10 @@ const AdminLayout = (props) => {
       })
     }
   }, [prevHistory]);
+
+  useEffect(() => {
+    getCurrentUser();
+  }, []);
 
   return (
     <div className="wrapper" ref={wrapperRef}>
@@ -65,4 +72,7 @@ const AdminLayout = (props) => {
     </div>
   );
 };
-export default AdminLayout;
+const mapDispatchToProps = dispatch => bindActionCreators({
+  getCurrentUser: () => userActions.getCurrentUser()
+}, dispatch);
+export default connect(null, mapDispatchToProps)(AdminLayout);

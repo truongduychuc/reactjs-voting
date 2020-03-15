@@ -1,5 +1,9 @@
 .card {
   border: 0;
+  border-radius: $border-radius-small;
+  position: relative;
+  margin-bottom: 20px;
+  @include box-shadow($box-shadow);
 
   &.card-plain {
     background-color: transparent;

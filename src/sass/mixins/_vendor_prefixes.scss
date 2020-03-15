@@ -10,6 +10,15 @@
   box-shadow: $color;
 }
 
+@mixin background-image($image) {
+  -webkit-background-image: $image;
+  -moz-background-image: $image;
+  -ms-background-image: $image;
+  -o-background-image: $image;
+  -khtml-background-image: $image;
+  background-image: $image;
+}
+
 @mixin sidebar-color($color) {
   &:after {
     background: $color;

@@ -1,6 +1,5 @@
 // for sidebar
 import Dashboard from "./app/dashboard/Dashboard";
-import UserProfile from "./app/user-profile/UserProfile";
 import UserList from "./app/users/UserList";
 import UserDetail from "./app/users/UserDetail";
 
@@ -16,16 +15,6 @@ export const routes = [
         }
     },
     {
-        component: UserProfile,
-        icon: 'users_single-02',
-        layout: '/vt',
-        name: 'User Profile',
-        path: '/user-profile',
-        haveLinks: {
-            sidebar: false
-        },
-    },
-    {
         component: UserList,
         icon: 'design_bullet-list-67',
         layout: '/vt',
@@ -38,10 +27,11 @@ export const routes = [
     {
         component: UserDetail,
         layout: '/vt',
-        name: 'User Detail',
-        path: ['/users/:id', '/profile'],
+        icon: 'shopping_credit-card',
+        name: 'My Profile',
+        path: '/user-profile',
         haveLinks: {
-            sidebar: false
+            sidebar: true
         },
     },
 

@@ -5,6 +5,6 @@
  */
 import React from 'react';
 
-export const NowUiIcon = ({icon}) => (
-  <i className={`now-ui-icons ${icon}`} />
+export const NowUiIcon = ({icon, className}) => (
+  <i className={`now-ui-icons ${icon} ${className}`}/>
 );

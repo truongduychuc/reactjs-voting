@@ -18,11 +18,11 @@ $padding-small-horizontal: 15px !default;
 $padding-round-horizontal: 23px !default;
 
 // sidebar
-$sidebar-width: 260px!default;
+$sidebar-width: 260px !default;
 $sidebar-mini-width: 80px;
 
 // main panel
-$main-panel-width: calc(100% - #{$sidebar-width})!default;
+$main-panel-width: calc(100% - #{$sidebar-width}) !default;
 
 // color
 $info-color: #2CA8FF;
@@ -51,7 +51,8 @@ $sidebar-box-shadow: 0px 2px 22px 0 rgba(0, 0, 0, .20), 0px 2px 30px 0 rgba(0, 0
 $btn-round-radius: 30px !default;
 
 // font
-$sans-serif-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+//$sans-serif-family: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+$sans-serif-family: 'Nunito Sans', Arial, sans-serif;
 
 $font-size-mini: 0.7142em !default;
 $font-size-large: 1em !default;
@@ -63,6 +64,7 @@ $font-size-h3: 2em !default;
 $font-size-h4: 1.714em !default; // ~24px
 $font-size-h5: 1.57em !default;
 $font-size-h6: 1em !default;
+$input-font-size: .9rem !default;
 //$font-size-base: 0.875rem !default;
 
 $font-weight-normal: 400 !default;
@@ -87,6 +89,7 @@ $border-radius-small: 0.1875rem !default;
 $border-radius-extra-small: 0.125rem !default;
 $border-radius-large: 0.25rem !default;
 $border-radius-extreme: 0.875rem !default;
+$thin-white-border: 1px solid #fff;
 
 $topbar-x: topbar-x !default;
 $topbar-back: topbar-back !default;
@@ -105,9 +108,15 @@ $btn-icon-font-size-small: 0.6875rem !default;
 $btn-icon-size-small: 1.875rem !default;
 $btn-icon-size-lg: 3.6rem !default;
 
+// images
+$default-avatar: url("/assets/img/blue_user.png");
+
+
 // component
 $switch-btn-width-lg: 60px;
 $switch-btn-height-lg: 34px;
 $switch-btn-width-md: 32px;
 $switch-btn-height-md: 19px;
 $switch-slider-toggle-size: 14px;
+
+

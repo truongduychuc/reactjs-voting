@@ -9,6 +9,18 @@ function get(url, params) {
     })
   })
 }
+
+// get data only
+function getData(url, params) {
+  return new Promise((resolve, reject) => {
+    axios.get(url, {params}).then(res => {
+      resolve(res.data.data);
+    }).catch(err => {
+      reject(err);
+    })
+  })
+}
+
 function post(url, data, options) {
   return new Promise((resolve, reject) => {
     axios.post(url, data).then(res => {
@@ -39,6 +51,7 @@ function put(url, data, options) {
 
 const apiService = {
   get,
+  getData,
   post,
   put,
   patch

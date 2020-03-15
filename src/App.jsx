@@ -12,6 +12,7 @@ import AdminLayout from './app/layouts/Admin';
 import Login from "./app/auth/Login";
 import { connect, Provider } from "react-redux";
 import { store } from './store';
+import "./sass/animate.css"
 
 const history = createBrowserHistory();
 
