@@ -13,7 +13,7 @@ import { bindActionCreators } from "redux";
 import { userActions } from "../users";
 import { connect } from 'react-redux';
 
-const AdminLayout = ({getCurrentUser, ...props}) => {
+const AdminLayout = ({getCurrentUser, authUserError, ...props}) => {
   const mainPanelRef = useRef(null);
   const wrapperRef = useRef(null);
   const [backgroundColor] = useState('blue');
@@ -40,6 +40,10 @@ const AdminLayout = ({getCurrentUser, ...props}) => {
   useEffect(() => {
     getCurrentUser();
   }, []);
+
+  useEffect(() => {
+
+  }, [authUserError]);
 
   return (
     <div className="wrapper" ref={wrapperRef}>
@@ -72,7 +76,10 @@ const AdminLayout = ({getCurrentUser, ...props}) => {
     </div>
   );
 };
+const mapStateToProps = state => ({
+  authUserError: state.authUser.error
+});
 const mapDispatchToProps = dispatch => bindActionCreators({
   getCurrentUser: () => userActions.getCurrentUser()
 }, dispatch);
-export default connect(null, mapDispatchToProps)(AdminLayout);
+export default connect(mapStateToProps, mapDispatchToProps)(AdminLayout);

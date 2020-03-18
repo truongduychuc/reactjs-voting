@@ -31,9 +31,8 @@ import { bindActionCreators } from "redux";
 import { getAuthUser } from "./actions";
 import { connect } from 'react-redux';
 
-const UserDetail = ({updateUser}) => {
+const UserDetail = ({updateUser, currentUser}) => {
   const [activeTab, setActiveTab] = useState(1);
-  const [user, setUser] = useState({});
   const [isEditing, setEditing] = useState(false);
   const [teamList, setTeamList] = useState([]);
 
@@ -50,6 +49,7 @@ const UserDetail = ({updateUser}) => {
   const editProfile = () => {
     setEditing(true);
   };
+  const user = currentUser;
   const {
     user_name,
     email,
@@ -63,12 +63,12 @@ const UserDetail = ({updateUser}) => {
     team_id
   } = user;
   const initialForm = {
-    first_name,
-    last_name,
-    english_name,
-    phone,
-    address,
-    team_id
+    first_name: first_name ? first_name : '',
+    last_name: last_name ? last_name : '',
+    english_name: english_name ? english_name : '',
+    phone: phone ? phone : '',
+    address: address ? address : '',
+    team_id: team_id != null ? team_id : ''
   };
 
   const tabs = [
@@ -91,20 +91,12 @@ const UserDetail = ({updateUser}) => {
 
   useEffect(() => {
     if (isMountedRef.current) {
-      getUserData();
       getTeamList();
     }
 
     // eslint-disable-next-line
   }, [isMountedRef]);
 
-  const getUserData = () => {
-    apiService.getData('http://localhost:8000/api/user/current').then(user => {
-      if (isMountedRef.current) {
-        setUser(user);
-      }
-    });
-  };
 
   const getTeamList = () => {
     apiService.get('http://localhost:8000/api/teams').then(list => {
@@ -427,8 +419,12 @@ const UserDetail = ({updateUser}) => {
     </>
   );
 };
+const mapStateToProps = (state) => {
+  const {authUser} = state;
+  return {currentUser: authUser.current};
+};
 const mapDispatchToProps = dispatch => bindActionCreators({
   updateUser: (user) => dispatch(getAuthUser(user))
 }, dispatch);
-export default connect(null, mapDispatchToProps)(UserDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(UserDetail);
 

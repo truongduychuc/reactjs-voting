@@ -18,16 +18,28 @@ const initialUser = {
     full_name: '',
     display_name: '',
     team_name: ''
-  }
+  },
+  requesting: false,
+  success: false,
+  error: {}
 };
 
 export const authUser = (state = initialUser, action) => {
   switch (action.type) {
+    case userActionTypes.REQUEST_AUTH_USER:
+      return {
+        ...state,
+        ...{
+          requesting: true
+        }
+      };
     case userActionTypes.GET_AUTH_USER:
       return {
         ...state,
         ...{
-          current: action.user
+          current: action.user,
+          success: true,
+          requesting: false,
         }
       };
     default:
@@ -51,6 +63,13 @@ export const usersReducer = (state = initialState, action) => {
         ...{
           users: action.users,
           meta: action.meta
+        }
+      };
+    case userActionTypes.ERROR_AUTH_USER:
+      return {
+        ...state,
+        ...{
+          error: action.error
         }
       };
     default:
