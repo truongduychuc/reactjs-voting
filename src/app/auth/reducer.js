@@ -33,7 +33,8 @@ export const authentication = (state = initialState, action) => {
       return {
         ...state, ...{
           authenticated: true,
-          payload: action.payload
+          payload: action.payload,
+          loggingIn: false,
         }
       };
     case authActionTypes.LOGIN_FAILURE:
@@ -41,7 +42,8 @@ export const authentication = (state = initialState, action) => {
         ...state,
         ...{
           authenticated: false,
-          error: action.error
+          error: action.error,
+          loggingIn: false
         }
       };
     case authActionTypes.LOG_OUT:

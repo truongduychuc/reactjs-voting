@@ -31,7 +31,7 @@ import { bindActionCreators } from "redux";
 import { getAuthUser } from "./actions";
 import { connect } from 'react-redux';
 
-const UserDetail = ({updateUser, currentUser}) => {
+const UserDetail = ({updateUser, currentUser, ...props}) => {
   const [activeTab, setActiveTab] = useState(1);
   const [isEditing, setEditing] = useState(false);
   const [teamList, setTeamList] = useState([]);
@@ -421,7 +421,7 @@ const UserDetail = ({updateUser, currentUser}) => {
 };
 const mapStateToProps = (state) => {
   const {authUser} = state;
-  return {currentUser: authUser.current};
+  return {currentUser: authUser.current, userInfoLoading: authUser.requesting};
 };
 const mapDispatchToProps = dispatch => bindActionCreators({
   updateUser: (user) => dispatch(getAuthUser(user))

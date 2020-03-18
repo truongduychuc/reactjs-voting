@@ -42,6 +42,15 @@ export const authUser = (state = initialUser, action) => {
           requesting: false,
         }
       };
+    case userActionTypes.ERROR_AUTH_USER:
+      return {
+        ...state,
+        ...{
+          success: false,
+          requesting: false,
+          error: action.error
+        }
+      };
     default:
       return state;
   }
