@@ -55,14 +55,17 @@
 }
 
 .detail-card {
-  @include media-breakpoint-up(sm) {
+  @include media-breakpoint-up(lg) {
     .nav-link {
       padding: 1rem 1.5rem;
     }
+    .nav-link {
+      font-size: 1.2rem;
+    }
   }
+
   .nav-link {
     text-transform: uppercase;
-    font-size: 1.2rem;
   }
   .card-body {
     min-height: 371px;

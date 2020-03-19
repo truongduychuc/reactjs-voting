@@ -3,8 +3,8 @@
  using WebStorm at
  20:15 on 23-Feb-20
  */
-import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
-import React, {createContext, useEffect, useRef, useState} from 'react';
+import { Redirect, Route, Switch, useHistory } from 'react-router-dom';
+import React, { createContext, useEffect, useRef, useState } from 'react';
 import { routes } from "../../routes";
 import DemoNavbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
@@ -12,20 +12,24 @@ import { usePrevious } from "../../hooks";
 import { bindActionCreators } from "redux";
 import { userActions } from "../users";
 import { connect } from 'react-redux';
-import {ToastrNotification} from "../components";
+import { ToastrNotification } from "../components";
+import { hasUnauthorizedError } from "../errors";
+import { authActions } from "../auth";
+
 export const NotificationContext = createContext(null);
 
 
-const AdminLayout = ({getCurrentUser, authUserError, ...props}) => {
+const AdminLayout = ({authenticated, getCurrentUser, rAppErrors, logout, ...props}) => {
   const mainPanelRef = useRef(null);
   const wrapperRef = useRef(null);
   const notificationRef = useRef(null);
   const [backgroundColor] = useState('blue');
-
+  const history = useHistory();
 
   const catchRequestOpenSidebar = () => {
     wrapperRef.current.classList.toggle('nav-open');
   };
+
   const prevHistory = usePrevious(props.history);
   const notify = () => {
     const options = {
@@ -48,51 +52,65 @@ const AdminLayout = ({getCurrentUser, authUserError, ...props}) => {
         top: BEGINNING
       })
     }
-  }, [prevHistory]);
+  });
 
-  const location = useLocation();
   useEffect(() => {
     getCurrentUser();
-  }, [location.pathname]);
+  }, [history.location.pathname, getCurrentUser]);
 
+  useEffect(() => {
+    if (!authenticated) {
+      history.push('/auth/login');
+    }
+  });
+
+  useEffect(() => {
+    if (hasUnauthorizedError(rAppErrors)) {
+      // token expires
+      // unauthenticate, login again
+      logout();
+    }
+  });
   return (
-      <NotificationContext.Provider value={notify}>
-        <div className="wrapper" ref={wrapperRef}>
-          <Sidebar
-              routes={routes}
-              backgroundColor={backgroundColor}
-              {...props}
+    <NotificationContext.Provider value={notify}>
+      <div className="wrapper" ref={wrapperRef}>
+        <Sidebar
+          routes={routes}
+          backgroundColor={backgroundColor}
+          {...props}
+        />
+        <div className="main-panel" ref={mainPanelRef}>
+          <DemoNavbar
+            {...props}
+            wrapperRef={wrapperRef}
+            sidebarCallback={catchRequestOpenSidebar}
           />
-          <div className="main-panel" ref={mainPanelRef}>
-            <DemoNavbar
-                {...props}
-                wrapperRef={wrapperRef}
-                sidebarCallback={catchRequestOpenSidebar}
-            />
-            <Switch>
-              {routes.map(({layout, path, component}, key) =>
-                  (
-                      <Route
-                          exact
-                          path={`${layout}${path}`}
-                          component={component}
-                          key={key}
-                      />
-                  ))}
-              <Route exact path="/vt">
-                <Redirect to="/vt/dashboard"/>
-              </Route>
-            </Switch>
-            <ToastrNotification ref={notificationRef} />
-          </div>
+          <Switch>
+            {routes.map(({layout, path, component}, key) =>
+              (
+                <Route
+                  exact
+                  path={`${layout}${path}`}
+                  component={component}
+                  key={key}
+                />
+              ))}
+            <Route exact path="/vt">
+              <Redirect to="/vt/dashboard"/>
+            </Route>
+          </Switch>
+          <ToastrNotification ref={notificationRef}/>
         </div>
-      </NotificationContext.Provider>
+      </div>
+    </NotificationContext.Provider>
   );
 };
 const mapStateToProps = state => ({
-  authUserError: state.authUser.error
+  rAppErrors: state.appError.errors,
+  authenticated: state.authentication.authenticated
 });
 const mapDispatchToProps = dispatch => bindActionCreators({
-  getCurrentUser: () => userActions.getCurrentUser()
+  getCurrentUser: () => userActions.getCurrentUser(),
+  logout: () => authActions.logout(),
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(AdminLayout);

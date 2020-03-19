@@ -6,8 +6,11 @@ import { ModelPagination, SwitchButton } from "../components";
 import confirmService from '../../services/confirm-service';
 import { useIsMountedRef } from "../../hooks";
 import { Link } from "react-router-dom";
+import { bindActionCreators } from "redux";
+import { errorActions } from "../errors";
+import { connect } from 'react-redux';
 
-const UserList = () => {
+const UserList = ({pushError}) => {
   const [users, setUsers] = useState([]);
   const [meta, setMeta] = useState({
     per_page: 10,
@@ -66,7 +69,9 @@ const UserList = () => {
             ...serverMeta
           }))
         }
-      });
+      }).catch(err => {
+      pushError(err);
+    });
   };
   const {total: totalRows, per_page: perPage} = meta;
   return (
@@ -179,7 +184,11 @@ const ActionsCell = ({id}) => (
 
 const onChange = (currentValue) => {
   confirmService.show().then(result => {
-
   });
 };
-export default UserList;
+
+const mapDispatchToProps = dispatch => bindActionCreators({
+  pushError: err => errorActions.add(err)
+}, dispatch);
+
+export default connect(null, mapDispatchToProps)(UserList);

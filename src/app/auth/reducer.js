@@ -38,14 +38,24 @@ export const authentication = (state = initialState, action) => {
         }
       };
     case authActionTypes.LOGIN_FAILURE:
-      return {
-        ...state,
-        ...{
-          authenticated: false,
-          error: action.error,
-          loggingIn: false
-        }
-      };
+    /*const {response } = action.error;
+    let error = {};
+    if (response) {
+      const {data, status} = response;
+      error = {
+        message: data.message,
+        statusCode: status
+      }
+    }
+    return {
+      ...state,
+      ...{
+        authenticated: false,
+        error,
+        loggingIn: false
+      }
+    };*/
+    // fall through
     case authActionTypes.LOG_OUT:
       return emptyState;
     default:

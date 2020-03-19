@@ -13,36 +13,42 @@ import Login from "./app/auth/Login";
 import { connect, Provider } from "react-redux";
 import { store } from './store';
 import "./sass/animate.css"
+import 'react-redux-toastr/lib/css/react-redux-toastr.min.css'
+import { ReduxToastr } from "react-redux-toastr/lib/ReduxToastr";
 
 const history = createBrowserHistory();
 
 const App = () => (
+  <>
     <Router history={history}>
-        <Switch>
-          <PrivateRoute
-            path="/vt"
-            component={AdminLayout}
-          />
-          <Route
-            path="/auth/login"
-            component={Login}
-          />
-          <Route exact path="/">
-            <Redirect to="/vt"/>
-          </Route>
-          <Route path="*">
-            <NotFound/>
-          </Route>
-        </Switch>
+      <Switch>
+        <PrivateRoute
+          path="/vt"
+          component={AdminLayout}
+        />
+        <Route
+          path="/auth/login"
+          component={Login}
+        />
+        <Route exact path="/">
+          <Redirect to="/vt"/>
+        </Route>
+        <Route path="*">
+          <NotFound/>
+        </Route>
+      </Switch>
     </Router>
+    {/* props are not required*/}
+    <ReduxToastr/>
+  </>
 );
 
 const ReduxConnectedApp = connect()(App);
 
 const AppWithStore = () => (
-    <Provider store={store}>
-        <ReduxConnectedApp/>
-    </Provider>
+  <Provider store={store}>
+    <ReduxConnectedApp/>
+  </Provider>
 );
 export default AppWithStore;
 
