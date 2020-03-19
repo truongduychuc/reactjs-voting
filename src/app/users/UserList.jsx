@@ -5,7 +5,7 @@ import { apiService } from "../../services/api";
 import { confirm, ModelPagination, SwitchButton } from "../components";
 import { useIsMountedRef } from "../../hooks";
 import { bindActionCreators } from "redux";
-import { errorActions } from "../errors";
+import { consumer as errorConsumer } from "../errors";
 import { connect } from 'react-redux';
 import { apiUrls } from "../../services";
 
@@ -209,7 +209,7 @@ const UserList = ({pushError}) => {
 
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  pushError: err => errorActions.add(err)
+  pushError: err => errorConsumer.add(err)
 }, dispatch);
 
 export default connect(null, mapDispatchToProps)(UserList);

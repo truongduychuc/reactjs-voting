@@ -29,15 +29,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Field, Form, Formik } from "formik";
 import { bindActionCreators } from "redux";
-import { getAuthUser, userActions } from "./actions";
+import { consumer } from "./consumers";
 import { connect } from 'react-redux';
 import { apiUrls } from "../../services";
+import { consumer as errorConsumer } from "../errors";
+import { creator } from "./actions";
 
 const UserDetail = ({
                       updateUser,
                       currentUser,
                       getCurrentUser,
                       userInfoLoading,
+                      pushError,
                       ...props
                     }) => {
   const [activeTab, setActiveTab] = useState(1);
@@ -117,6 +120,8 @@ const UserDetail = ({
       if (isMountedRef.current) {
         setTeamList(list);
       }
+    }).catch(error => {
+      pushError(error);
     });
   };
 
@@ -124,9 +129,10 @@ const UserDetail = ({
     setStatus();
     setSubmitting(true);
     apiService.post(apiUrls.API.UPDATE_PROFILE, data).then(success => {
-      alert('Success');
       updateUser(success.data);
       backToView();
+    }).catch(err => {
+      setErrors();
     });
   };
   return (
@@ -441,8 +447,9 @@ const mapStateToProps = (state) => {
   return {currentUser: authUser.current, userInfoLoading: authUser.requesting};
 };
 const mapDispatchToProps = dispatch => bindActionCreators({
-  getCurrentUser: () => userActions.getCurrentUser(),
-  updateUser: (user) => dispatch(getAuthUser(user))
+  getCurrentUser: () => consumer.getCurrentUser(),
+  updateUser: user => dispatch(creator.successRequest(user)),
+  pushError: err => errorConsumer.add(err)
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(UserDetail);
 

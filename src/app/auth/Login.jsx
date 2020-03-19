@@ -27,7 +27,7 @@ import { connect } from "react-redux";
 import { authActions } from "./actions";
 import { bindActionCreators } from "redux";
 import { useHistory } from "react-router";
-import { errorActions } from "../errors";
+import { consumer as errorConsumer } from "../errors";
 
 
 const Login = ({loggingIn, authenticated, ...props}) => {
@@ -170,7 +170,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => bindActionCreators({
   login: (email, password) => authActions.login(email, password),
   logout: () => authActions.logout(),
-  clearErrors: () => errorActions.clear()
+  clearErrors: () => errorConsumer.clear()
 }, dispatch);
 const connectedLoginPage = connect(mapStateToProps, mapDispatchToProps)(Login);
 export default connectedLoginPage;

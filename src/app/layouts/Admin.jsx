@@ -10,7 +10,7 @@ import DemoNavbar from "../navbar/Navbar";
 import Sidebar from "../sidebar/Sidebar";
 import { usePrevious } from "../../hooks";
 import { bindActionCreators } from "redux";
-import { userActions } from "../users";
+import { consumer as userConsumer } from "../users";
 import { connect } from 'react-redux';
 import { hasUnauthorizedError } from "../errors";
 import { authActions } from "../auth";
@@ -94,7 +94,7 @@ const mapStateToProps = state => ({
   requesting: state.authUser.requesting
 });
 const mapDispatchToProps = dispatch => bindActionCreators({
-  getCurrentUser: () => userActions.getCurrentUser(),
+  getCurrentUser: () => userConsumer.getCurrentUser(),
   logout: () => authActions.logout(),
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(AdminLayout);
