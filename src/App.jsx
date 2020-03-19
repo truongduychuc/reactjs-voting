@@ -14,7 +14,6 @@ import { connect, Provider } from "react-redux";
 import { store } from './store';
 import "./sass/animate.css"
 import 'react-redux-toastr/lib/css/react-redux-toastr.min.css'
-import { ReduxToastr } from "react-redux-toastr/lib/ReduxToastr";
 
 const history = createBrowserHistory();
 
@@ -38,8 +37,6 @@ const App = () => (
         </Route>
       </Switch>
     </Router>
-    {/* props are not required*/}
-    <ReduxToastr/>
   </>
 );
 

@@ -4,11 +4,12 @@
  23:15 on 23-Feb-20
  */
 import React, { useEffect } from 'react';
+import { apiUrls } from "../../services";
 
 const UserProfile = () => {
   useEffect(() => {
     // eslint-disable-next-line no-undef
-    axios.get('http://localhost:8000/api/users');
+    axios.get(apiUrls.API.USERS);
   }, []);
   return (
     <div>

@@ -19,19 +19,27 @@ import {
   NavLink,
   Row,
   TabContent,
-  TabPane
+  TabPane,
+  Container
 } from 'reactstrap';
 import { NowUiIcon } from "../components";
-import apiService from "../../services/api";
+import { apiService } from "../../services/api";
 import { useIsMountedRef } from "../../hooks";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { Field, Form, Formik } from "formik";
 import { bindActionCreators } from "redux";
-import { getAuthUser } from "./actions";
+import { getAuthUser, userActions } from "./actions";
 import { connect } from 'react-redux';
+import { apiUrls } from "../../services";
 
-const UserDetail = ({updateUser, currentUser, ...props}) => {
+const UserDetail = ({
+                      updateUser,
+                      currentUser,
+                      getCurrentUser,
+                      userInfoLoading,
+                      ...props
+                    }) => {
   const [activeTab, setActiveTab] = useState(1);
   const [isEditing, setEditing] = useState(false);
   const [teamList, setTeamList] = useState([]);
@@ -97,9 +105,15 @@ const UserDetail = ({updateUser, currentUser, ...props}) => {
     // eslint-disable-next-line
   }, [isMountedRef]);
 
+  useEffect(() => {
+    if (!userInfoLoading) {
+      getCurrentUser();
+    }
+  }, []);
+
 
   const getTeamList = () => {
-    apiService.get('http://localhost:8000/api/teams').then(list => {
+    apiService.get(apiUrls.API.TEAMS).then(list => {
       if (isMountedRef.current) {
         setTeamList(list);
       }
@@ -109,7 +123,7 @@ const UserDetail = ({updateUser, currentUser, ...props}) => {
   const submitHandler = (data, {setStatus, setSubmitting, setErrors}) => {
     setStatus();
     setSubmitting(true);
-    apiService.post('http://localhost:8000/api/user/actions/update-profile', data).then(success => {
+    apiService.post(apiUrls.API.UPDATE_PROFILE, data).then(success => {
       alert('Success');
       updateUser(success.data);
       backToView();
@@ -119,6 +133,9 @@ const UserDetail = ({updateUser, currentUser, ...props}) => {
     <>
       <PanelHeader size="sm"/>
       <div className="content">
+        <Container>
+
+        </Container>
         <Row>
           <Col
             md={8}
@@ -424,6 +441,7 @@ const mapStateToProps = (state) => {
   return {currentUser: authUser.current, userInfoLoading: authUser.requesting};
 };
 const mapDispatchToProps = dispatch => bindActionCreators({
+  getCurrentUser: () => userActions.getCurrentUser(),
   updateUser: (user) => dispatch(getAuthUser(user))
 }, dispatch);
 export default connect(mapStateToProps, mapDispatchToProps)(UserDetail);

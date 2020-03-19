@@ -55,18 +55,19 @@
 }
 
 .detail-card {
-  @include media-breakpoint-up(lg) {
+  @include media-breakpoint-up(xl) {
     .nav-link {
       padding: 1rem 1.5rem;
     }
     .nav-link {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
   }
 
   .nav-link {
     text-transform: uppercase;
   }
+
   .card-body {
     min-height: 371px;
   }
@@ -82,6 +83,7 @@
   .back-to-view {
     color: $black-color;
     cursor: pointer;
+
     &:hover {
       color: lighten($black-color, 30%);
     }

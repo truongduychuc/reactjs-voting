@@ -1,6 +1,7 @@
 import { userActionTypes } from "./types";
-import apiService from "../../services/api";
+import { apiService } from "../../services/api";
 import { errorActions } from "../errors";
+import { apiUrls } from "../../services";
 
 export const userActions = {
   getCurrentUser
@@ -9,7 +10,7 @@ export const userActions = {
 function getCurrentUser() {
   return dispatch => {
     dispatch(requestAuthUser());
-    return apiService.getData('http://localhost:8000/api/user/current').then(user => {
+    return apiService.getData(apiUrls.API.CURRENT_AUTH_USER).then(user => {
       dispatch(getAuthUser(user));
     }).catch(err => {
       errorActions.add(err);
