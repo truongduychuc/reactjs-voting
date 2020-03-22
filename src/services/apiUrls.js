@@ -16,7 +16,8 @@ class ApiUrls {
     AWARDS: '/api/awards',
     AWARD_ID: '/api/awards/',
     LOGIN: '/oauth/token',
-    LOGOUT: '/oauth/logout'
+    LOGOUT: '/oauth/logout',
+    ROLE_FILTER_PROVIDER: '/api/user/role-form-resolver'
   };
 
   constructor() {
@@ -24,7 +25,7 @@ class ApiUrls {
       if (typeof this.apis[key] !== 'string') {
       } else {
         let server = SERVER_ROOT_URL;
-        if (!SERVER_ROOT_URL.endsWith('/') && this.apis[key].startsWith('/')) {
+        if (!SERVER_ROOT_URL.endsWith('/') && !this.apis[key].startsWith('/')) {
           server += '/';
         }
         this.API[key] = server + this.apis[key];

@@ -168,3 +168,9 @@
     font-size: 11px;
   }
 }
+
+.select-box-control {
+  @extend .form-control;
+  width: auto;
+  display: inline-block;
+}

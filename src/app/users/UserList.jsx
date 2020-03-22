@@ -1,18 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import { Button, Card, CardBody, CardHeader, CardTitle, Table } from 'reactstrap';
+import React, { useEffect, useRef, useState } from 'react';
+import { Button, Card, CardBody, CardHeader, CardTitle, Col, Row, Table } from 'reactstrap';
 import PanelHeader from "../panel-header/PanelHeader";
 import { apiService } from "../../services/api";
-import { confirm, ModelPagination, SwitchButton } from "../components";
+import {
+  confirm,
+  Filter,
+  SearchInput,
+  SwitchButton,
+  TableRowsSkeleton,
+  EmptyTableRow,
+  PerPageFilter
+} from "../components";
 import { useIsMountedRef } from "../../hooks";
 import { bindActionCreators } from "redux";
 import { consumer as errorConsumer } from "../errors";
 import { connect } from 'react-redux';
 import { apiUrls } from "../../services";
+import ReactPaginate from 'react-paginate';
+import { toInteger } from "../../utils/number";
+import { perPageOptions } from "../utils";
 
 
 const UserList = ({pushError}) => {
   // states
   const [users, setUsers] = useState([]);
+  const [isRequestingUsers, setRequestingUsers] = useState(false);
+  const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
+  const [queryParams, setQueryParams] = useState({
+    _rK: '',
+    _sK: '',
+  });
+  const [roleOptions, setRoleOptions] = useState([]);
   const [meta, setMeta] = useState({
     per_page: 10,
     page: 1
@@ -46,15 +64,19 @@ const UserList = ({pushError}) => {
     }
   ];
 
-  const StatusCell = ({status, row}) => (
-    <td>
-      <SwitchButton
-        onChange={currentValue => onStatusValChange(currentValue, row)}
-        round={true}
-        checked={!!status}
-      />
-    </td>
-  );
+  const StatusCell = ({status, row}) => {
+    const switchRef = useRef(null);
+
+    return (<td>
+        <SwitchButton
+          ref={switchRef}
+          onChange={currentValue => onStatusValChange(currentValue, row, switchRef.current)}
+          round={true}
+          checked={!!status}
+        />
+      </td>
+    )
+  };
 
   const HeadingRow = ({fields}) => (
     <tr>
@@ -80,12 +102,6 @@ const UserList = ({pushError}) => {
                   key={`row_col${rowIndex}_${colID}`}
                 />
               );
-            case 'id' :
-              return (
-                <StandardCell
-                  key={`row_col${rowIndex}_${colID}`}
-                  value={rowIndex + 1}
-                />);
             default:
               return (
                 <StandardCell
@@ -114,20 +130,58 @@ const UserList = ({pushError}) => {
   useEffect(() => {
     getUserList();
     // eslint-disable-next-line
-  }, [meta.page, isMountedRef]);
+  }, [meta.page, isMountedRef, queryParams, meta.per_page]);
 
+  useEffect(() => {
+    roleFilterProvider();
+    // eslint-disable-next-line
+  }, []);
 
-  // functions
-  const onPageChanged = (nextPage) => {
-    setMeta({
-      ...meta,
-      ...{
-        page: nextPage
+  const isTableEmpty = () => {
+    return users.length === 0;
+  };
+
+  const resolveParams = () => {
+    const except = [
+      'current_page',
+      'from',
+      'to',
+      'total',
+      'count',
+      'path',
+      'last_page'
+    ];
+    let usedMeta = {};
+    Object.keys(meta).forEach(key => {
+      if (!except.includes(key)) {
+        usedMeta[key] = meta[key];
       }
+    });
+    return {
+      ...usedMeta,
+      ...queryParams
+    }
+  };
+
+  const onPerPageChanged = value => {
+    setMeta(prev => ({
+      ...prev,
+      per_page: value
+    }))
+  };
+  const roleFilterProvider = () => {
+    apiService.getData(apiUrls.API.ROLE_FILTER_PROVIDER).then(data => {
+      if (isMountedRef.current) {
+        setRoleOptions(data);
+      }
+    }).catch(err => {
+      pushError(err);
     })
   };
+
   const getUserList = () => {
-    apiService.get(apiUrls.API.USERS, meta)
+    setRequestingUsers(true);
+    apiService.get(apiUrls.API.USERS, resolveParams())
       .then(res => {
         if (isMountedRef.current) {
           const {data, meta: serverMeta} = res;
@@ -135,29 +189,60 @@ const UserList = ({pushError}) => {
           setMeta(m => ({
             ...meta,
             ...serverMeta
-          }))
+          }));
+          if (!firstTimeLoaded) {
+            setFirstTimeLoaded(true);
+          }
         }
       }).catch(err => {
       pushError(err);
+    }).finally(() => {
+      setRequestingUsers(false);
     });
   };
 
 
-  const onStatusValChange = (currentValue, item) => {
-    console.log(currentValue);
+  const onStatusValChange = (currentValue, item, switchObject) => {
+
     confirm().then(ok => {
       apiService.patch(apiUrls.API.CHANGE_STATUS_USER + item.id, {
         status: currentValue
       }).then(success => {
           getUserList();
         }
-      )
-    }).catch(fail => {
-      console.log('failed');
+      ).catch(fail => {
+        switchObject.restoreValue();
+        pushError(fail);
+      })
+    }).catch(rj => {
+      switchObject.restoreValue();
     })
   };
 
-  const {total: totalRows, per_page: perPage} = meta;
+  const {last_page} = meta;
+  const numberOfPages = toInteger(last_page);
+  const paginationConfig = {
+    pageClassName: "page-item",
+    pageLinkClassName: "page-link",
+    containerClassName: "pagination",
+    nextClassName: 'page-item',
+    nextLinkClassName: 'page-link',
+    previousClassName: 'page-item',
+    previousLinkClassName: 'page-link',
+    nextLabel: '\u203A', // >,
+    previousLabel: '\u2039', // <,
+    disabledClassName: 'disabled',
+    activeClassName: 'active',
+    hrefBuilder: () => '#',
+    pageRangeDisplayed: 2,
+    onPageChange: (selectedItem) => {
+      setMeta({
+        ...meta, ...{
+          page: selectedItem.selected + 1
+        }
+      })
+    }
+  };
   return (
     <>
       <PanelHeader size="sm"/>
@@ -165,7 +250,7 @@ const UserList = ({pushError}) => {
         <Card>
           <CardHeader>
             <CardTitle tag="h3">
-              Employees
+              Users
             </CardTitle>
             <div style={{fontSize: '0.75rem'}}>
               Note:
@@ -174,32 +259,76 @@ const UserList = ({pushError}) => {
                 <li>Inactive: temporarily off or left the company</li>
               </ul>
             </div>
+            <Row>
+              <Col className='mb-2' md={4} xl={3}>
+                <SearchInput
+                  onChange={value => {
+                    setQueryParams(prevState => (
+                      {
+                        ...prevState,
+                        _sK: value,
+                      }
+                    ))
+                  }}
+                />
+              </Col>
+              <Col className='mb-2' md={3} xl={2}>
+                <Filter
+                  options={roleOptions}
+                  onSelectionChange={value => {
+                    setQueryParams(prevState => (
+                      {
+                        ...prevState,
+                        _rK: value
+                      }
+                    ))
+                  }}
+                />
+              </Col>
+            </Row>
           </CardHeader>
           <CardBody>
             <Table borderless striped responsive="md">
               <thead>
-                <HeadingRow fields={tableFields}/>
+              <HeadingRow fields={tableFields}/>
               </thead>
               <tbody>
               {
-                users.map((row, index) => (
-                  <TableRow
-                    key={`user_row${index}`}
-                    fields={tableFields}
-                    rowIndex={index}
-                    item={row}
-                  />
-                ))
+                isRequestingUsers ? (
+                    <TableRowsSkeleton cols={6}/>
+                  ) :
+                  !isTableEmpty() ?
+                    users.map((row, index) => (
+                      <TableRow
+                        key={`user_row${index}`}
+                        fields={tableFields}
+                        rowIndex={index}
+                        item={row}
+                      />
+                    )) : (
+                      <EmptyTableRow
+                        cols={tableFields.length}
+                      />
+                    )
               }
               </tbody>
             </Table>
-            <div className="d-flex justify-content-end">
-              <ModelPagination
-                onPageChanged={onPageChanged}
-                totalRows={totalRows}
-                perPage={perPage}
-              />
-            </div>
+            <Row className="mt-2">
+              <Col className="text-center text-md-left" md={6}>
+                <PerPageFilter
+                  options={perPageOptions}
+                  onSelectionChange={onPerPageChanged}
+                />
+              </Col>
+              <Col className="d-flex justify-content-center justify-content-md-end" md={6}>
+                {firstTimeLoaded && !isTableEmpty() ? (
+                  <ReactPaginate
+                    pageCount={numberOfPages}
+                    {...paginationConfig}
+                  />
+                ) : null}
+              </Col>
+            </Row>
           </CardBody>
         </Card>
       </div>

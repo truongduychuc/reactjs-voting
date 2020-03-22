@@ -16,24 +16,24 @@ const _Pagination = (props) => {
   //
   const DEFAULT_BUTTON_LIMIT = 5;
   const [currentPage, setCurrentPage] = useState(1);
-  const pages = [];
-  const perPage = Number(props.perPage);
-  const totalRows = Number(props.totalRows);
-  const onPageChanged = props.onPageChanged;
+  const [localLimit, setLocalLimit] = useState(DEFAULT_BUTTON_LIMIT);
+  const localNumberOfPages = 1;
 
+  const {
+    // eslint-disable-next-line no-unused-vars
+    ellipsisText,
+    onPageChanged
+  } = props;
+  const perPage = toInteger(props.perPage);
+  const totalRows = toInteger(props.perPage);
+  const localPage = toInteger(props.page);
+
+  // eslint-disable-next-line no-unused-vars
   const firstPage = 1;
   // find last page
   const calculatedResult = Math.ceil(totalRows / perPage);
   const numberOfPages = !calculatedResult || calculatedResult < 1 ? 1 : calculatedResult;
-  const {
-    ellipsisText
-  } = props;
 
-
-  // create page arrays
-  for (let i = 1; i <= numberOfPages; i++) {
-    pages.push(i);
-  }
 
   const sanitizeLimit = value => {
     const limit = toInteger(value) || 1;
@@ -45,7 +45,13 @@ const _Pagination = (props) => {
     return page > numberOfPages ? numberOfPages : page < 1 ? 1 : page;
   };
 
-
+  const makePageArray = (startNumber, numberOfPages) => range(numberOfPages).map((val, i) => ({
+    number: startNumber + i,
+    classes: null
+  }));
+  // eslint-disable-next-line no-unused-vars
+  const isActivePage = pageNum => pageNum === currentPage;
+  // eslint-disable-next-line no-unused-vars
   const goToPage = page => evt => {
     evt.preventDefault();
     setCurrentPage(page);
@@ -54,16 +60,23 @@ const _Pagination = (props) => {
     }
   };
   useEffect(() => {
-    if (currentPage !== 1) {
-      goToPage(1);
-    }
+    setCurrentPage(sanitizeCurrentPage(localPage, localNumberOfPages));
     // eslint-disable-next-line
   }, []);
+  const {page, limit} = props;
+  useEffect(() => {
+    setCurrentPage(sanitizeCurrentPage(localPage, localNumberOfPages));
+    // eslint-disable-next-line
+  }, [page]);
+  useEffect(() => {
+    setLocalLimit(sanitizeLimit(limit));
+  }, [limit]);
+
   // calculate how many page need to be cut
   // prepare for rendering
 
   const paginationParams = () => {
-    const limit = DEFAULT_BUTTON_LIMIT;
+    const limit = localLimit;
     // amount of clickable link
     let numberOfLinks = limit;
     let startNumber = 1;
@@ -85,37 +98,92 @@ const _Pagination = (props) => {
       startNumber = numberOfPages - numberOfLinks + 1;
     } else {
       // and now the pointer is between two above cases
+      if (limit > ELLIPSIS_THRESHOLD) {
+        numberOfLinks = limit - 2;
+      }
+      startNumber = currentPage - Math.floor(numberOfLinks / 2);
+
 
     }
+    // sanitize params
+    if (startNumber < 1) {
+      startNumber = 1;
+    } else if (startNumber > numberOfPages - numberOfLinks) {
+      startNumber = numberOfPages - numberOfLinks + 1;
+    }
+    if (startNumber < 4) {
+      numberOfLinks += 2;
+      startNumber = 1;
+    }
+    const lastPageNumber = startNumber + numberOfLinks - 1;
+    if (lastPageNumber > numberOfPages - 3) {
+      numberOfLinks += (lastPageNumber === numberOfPages - 2 ? 2 : 3);
+    }
+
+    if (limit < ELLIPSIS_THRESHOLD) {
+      if (startNumber === 1) {
+        numberOfLinks = Math.min(numberOfLinks + 1, numberOfPages, limit + 1);
+      } else if (numberOfPages === startNumber + numberOfLinks - 1) {
+        startNumber = Math.max(startNumber - 1, 1);
+        numberOfLinks = Math.min(numberOfPages - startNumber + 1, numberOfPages, limit + 1);
+      }
+    }
+    numberOfLinks = Math.min(numberOfLinks, numberOfPages - startNumber + 1);
+    return {numberOfLinks, startNumber};
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const pageList = () => {
+    const {numberOfLinks, startNumber} = paginationParams();
+    const pages = makePageArray(startNumber, numberOfLinks);
+    if (pages.length > 3) {
+      const idx = currentPage - startNumber;
+      const classes = 'p-xs-down-none';
+
+      if (idx === 0) {
+        for (let i = 3; i < pages.length; i++) {
+          pages[i].classes = classes;
+        }
+      } else if (idx === pages.length - 1) {
+        for (let i = 0; i < pages.length - 3; i++) {
+          pages[i].classes = classes;
+        }
+      } else {
+        // hide all except current page, current page + 1, current page -1
+        for (let i = 0; i < idx - 1; i++) {
+          pages[i].classes = classes;
+        }
+        for (let i = pages.length - 1; i > idx + 1; i--) {
+          pages[i].classes = classes;
+        }
+      }
+    }
+    return pages;
+  };
+  const buttons = [];
+  buttons.push(
+    <PaginationItem>
+      <PaginationLink first>
+
+      </PaginationLink>
+    </PaginationItem>
+  );
+  buttons.push(
+    <PaginationItem>
+    <PaginationLink previous/>
+    </PaginationItem>
+  );
   return (
     <BPagination>
-      <PaginationItem disabled={currentPage === firstPage}>
-        <PaginationLink onClick={goToPage(1)} first href="#"/>
-      </PaginationItem>
-      <PaginationItem disabled={currentPage === firstPage}>
-        <PaginationLink onClick={goToPage(currentPage - 1)} previous href="#"/>
-      </PaginationItem>
-      {
-        range(numberOfPages).map(page => (
-          <PaginationItem active={page === currentPage} key={`pageNav${page}`}>
-            <PaginationLink onClick={goToPage(page)}>
-              {page}
-            </PaginationLink>
-          </PaginationItem>
-        ))
-      }
-      <PaginationItem disabled={currentPage === numberOfPages}>
-        <PaginationLink onClick={goToPage(currentPage + 1)} next href="#"/>
-      </PaginationItem>
-      <PaginationItem disabled={currentPage === numberOfPages}>
-        <PaginationLink onClick={goToPage(numberOfPages)} last href="#"/>
-      </PaginationItem>
+      {buttons}
     </BPagination>
   )
 };
 _Pagination.propTypes = {
+  page: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ]),
   totalRows: PropTypes.oneOfType([
     PropTypes.number, PropTypes.string
   ]),
@@ -131,14 +199,20 @@ _Pagination.propTypes = {
    * }
    * */
   onPageChanged: PropTypes.func,
-  ellipsisText: PropTypes.string
+  ellipsisText: PropTypes.string,
+  limit: PropTypes.oneOfType([
+    PropTypes.number,
+    PropTypes.string
+  ])
 };
 _Pagination.defaultProps = {
   totalRows: 1,
   perPage: 10,
   maxBoxes: 5,
   onPageChanged: _func.noop,
-  ellipsisText: '\u2026'
+  page: 1,
+  ellipsisText: '\u2026',
+  limit: 5,
 };
 
 export const ModelPagination = _Pagination;

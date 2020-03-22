@@ -55,6 +55,7 @@ const AdminLayout = ({authenticated, getCurrentUser, rAppErrors, logout, request
     if (!requesting) {
       getCurrentUser();
     }
+    // eslint-disable-next-line
   }, []);
 
   return (

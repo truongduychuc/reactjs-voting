@@ -1,0 +1,10 @@
+.p-xs-down-none {
+  @media (max-width: 575.8px) {
+    display: none;
+  }
+}
+.pagination {
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+}

@@ -3,7 +3,7 @@
  using WebStorm at
  21:45 on 07-Mar-20
  */
-import React, { useRef } from 'react';
+import React from 'react';
 import Proptypes from 'prop-types';
 import { _func } from "../../_helpers";
 
@@ -19,25 +19,45 @@ const defaultProps = {
   onChange: _func.noop
 };
 
-const Switch = ({round, checked, onChange}) => {
-  const inputRef = useRef(null);
+class SwitchButton extends React.Component {
+  inputRef = React.createRef();
 
-  const handleOnChange = () => {
-    onChange(inputRef.current.checked);
+  constructor(props) {
+    super(props);
+    this.state = {
+      originalCheck: props.checked
+    }
+  }
+
+  componentDidMount() {
+    this.inputRef.current.checked = this.state.originalCheck;
+  }
+
+  // used to rollback to origin value as we desire
+  restoreValue = () => {
+    this.inputRef.current.checked = this.props.checked;
+  };
+  handleOnChange = () => {
+    this.props.onChange(this.inputRef.current.checked);
   };
 
-  return (
-    <label className="switch">
-      <input
-        ref={inputRef}
-        defaultChecked={checked}
-        type="checkbox"
-        onChange={handleOnChange}
-      />
-      <span className={`slider ${round ? 'round' : ''}`}/>
-    </label>
-  )
-};
-Switch.defaultProps = defaultProps;
-Switch.propTypes = propTypes;
-export const SwitchButton = Switch;
+  render() {
+    const {round} = this.props;
+    return (
+      <label className="switch">
+        <input
+          ref={this.inputRef}
+          type="checkbox"
+          onChange={this.handleOnChange}
+        />
+        <span className={`slider ${round ? 'round' : ''}`}/>
+      </label>
+    )
+  }
+}
+
+SwitchButton.defaultProps = defaultProps;
+SwitchButton.propTypes = propTypes;
+export {
+  SwitchButton
+}
