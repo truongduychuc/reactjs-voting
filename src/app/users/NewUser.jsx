@@ -1,19 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { CardTitle, FormGroup, Label, Input, Row, Col, Button, UncontrolledTooltip } from 'reactstrap';
-import { Formik, Form, Field } from "formik";
+import React, { useEffect } from 'react';
+import { Button, CardTitle, Col, FormGroup, Input, Label, Row, UncontrolledTooltip } from 'reactstrap';
+import { Field, Form, Formik } from "formik";
 import { number, object, string } from 'yup';
 import { bindActionCreators } from "redux";
 import { connect } from 'react-redux';
-import { consumers as teamConsumers } from '../teams/consumers';
+import { consumers as teamConsumers } from '../teams';
+import { consumers as errorConsumers } from '../errors';
+import {consumers as roleConsumers} from '../roles'
 import { NowUiIcon } from "../components";
+import { userService } from "./services";
 
 
 const NewUser = (props) => {
 
-  const {getTeamOptions, teamOptions} = props;
+  const {getTeamOptions, teamOptions, getRoleOptions, pushError} = props;
 
   useEffect(() => {
     getTeamOptions();
+    getRoleOptions();
   }, []);
 
   const initialForm = {
@@ -29,16 +33,51 @@ const NewUser = (props) => {
   };
 
   const validationSchema = object().shape({
-    email: string().email('Email must be under format user@enclave.vn').required('Email is required'),
-    user_name: string().required('User name is required'),
-    first_name: string().required('First name is required'),
-    last_name: string().required('Last name is required'),
-    english_name: string(),
-    team_id: number().positive().required('Team selection is required')
+    email: string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(50, 'Email is only long ${max} characters at maximum')
+      .email('Email must be under format user@enclave.vn')
+      .matches(/^[a-zA-Z]./, 'Email can not start with number')
+      .required('Email is required'),
+    user_name: string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(50, 'User name is only long ${max} characters at maximum')
+      .required('User name is required'),
+    first_name: string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(100, 'First name is only long ${max} characters at maximum')
+      .required('First name is required'),
+    last_name: string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(100, 'Last name is only long ${max} characters at maximum')
+      .required('Last name is required'),
+    english_name: string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(100, 'English name is only long ${max} characters at maximum'),
+    team_id: number()
+      .integer()
+      .positive()
+      .required('Team selection is required'),
+    phone: string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(50, 'Phone number is only long ${max} characters at maximum')
+      .matches(/^\d{0,50}$/, 'Phone number can only contain the numbers'),
+    address: string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(255, 'Address is only long ${max} characters at maximum'),
+    role_id: number()
+      .integer()
+      .required('Role selection is required')
+      .positive()
   });
 
-  const submitHandler = (data, {}) => {
-
+  const submitHandler = (data, {setStatus, setSubmitting, setErrors}) => {
+    setSubmitting(true);
+    userService.createNew(data).then(success => {
+      window.alert('Success');
+    }).catch(err => {
+      pushError(err);
+    })
   };
 
   return (
@@ -155,6 +194,49 @@ const NewUser = (props) => {
                       )}
                     </Field>
                   </div>
+                </Col>
+                <Col md={6}>
+                  <h6>Contact Information</h6>
+                  <div className="mb-5">
+                    <Field name="phone">
+                      {({field, meta}) => (
+                        <FormGroup>
+                          <Label htmlFor="phone">
+                            Phone
+                          </Label>
+                          <Input
+                            type="tel"
+                            id="phone"
+                            placeholder="+843158xxx, etc."
+                            {...field}
+                          />
+                          {meta.touched && meta.error && (
+                            <div className="form-error">{meta.error}</div>
+                          )}
+                        </FormGroup>
+                      )}
+                    </Field>
+                    <Field name="address">
+                      {({field, meta}) => (
+                        <FormGroup>
+                          <Label htmlFor="address">
+                            Address
+                          </Label>
+                          <Input
+                            type="text"
+                            tag="textarea"
+                            rows={4}
+                            id="address"
+                            placeholder="455 Hoang Dieu St, Hai Chau Dis., Da Nang"
+                            {...field}
+                          />
+                          {meta.touched && meta.error && (
+                            <div className="form-error">{meta.error}</div>
+                          )}
+                        </FormGroup>
+                      )}
+                    </Field>
+                  </div>
                   <h6>Workplace</h6>
                   <div className="mb-5">
                     <Field name="team_id">
@@ -186,41 +268,24 @@ const NewUser = (props) => {
                         </FormGroup>
                       )}
                     </Field>
-                  </div>
-                </Col>
-                <Col md={6}>
-                  <h6>Contact Information</h6>
-                  <div>
-                    <Field name="phone">
+                    <Field name="role_id">
                       {({field, meta}) => (
                         <FormGroup>
-                          <Label htmlFor="phone">
-                            Phone
+                          <Label className="required mr-2">
+                            Role
                           </Label>
                           <Input
-                            type="tel"
-                            id="phone"
-                            placeholder="+843158xxx, etc."
+                            type="select"
+                            className="select-box-control"
                             {...field}
-                          />
-                          {meta.touched && meta.error && (
-                            <div className="form-error">{meta.error}</div>
-                          )}
-                        </FormGroup>
-                      )}
-                    </Field>
-                    <Field name="address">
-                      {({field, meta}) => (
-                        <FormGroup>
-                          <Label htmlFor="address">
-                            Address
-                          </Label>
-                          <Input
-                            type="text"
-                            id="address"
-                            placeholder="455 Hoang Dieu St, Hai Chau Dis., Da Nang"
-                            {...field}
-                          />
+                          >
+                          </Input>
+                          <Button id="roleOptionsRefresher" color="link">
+                            <NowUiIcon icon="loader_refresh"/>
+                          </Button>
+                          <UncontrolledTooltip target="roleOptionsRefresher">
+                            Refresh role options
+                          </UncontrolledTooltip>
                           {meta.touched && meta.error && (
                             <div className="form-error">{meta.error}</div>
                           )}
@@ -250,9 +315,12 @@ const NewUser = (props) => {
 };
 const mapStateToProps = state => ({
   teamOptions: state.teamReducer.options,
+  roleOptions: state.roleReducer.options,
 });
 const mapDispatchToProps = dispatch => bindActionCreators({
-  getTeamOptions: () => teamConsumers.getTeamOptions()
+  getTeamOptions: () => teamConsumers.getTeamOptions(),
+  getRoleOptions: () => roleConsumers.getRoleOptions(),
+  pushError: (err) => errorConsumers.add(err)
 }, dispatch);
 const ConnectedNewUser = connect(mapStateToProps, mapDispatchToProps)(NewUser);
 export {

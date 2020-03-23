@@ -15,7 +15,7 @@ import { toInteger } from "../../utils/number";
 import { perPageOptions } from "../utils";
 import ReactPaginate from "react-paginate";
 import { bindActionCreators } from "redux";
-import { consumer as errorConsumer } from "../errors";
+import { consumers as errorConsumer } from "../errors";
 import { connect } from "react-redux";
 
 const List = ({pushError}) => {

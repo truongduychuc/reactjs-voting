@@ -1,7 +1,7 @@
 import { HTTP } from "./statusCodes";
 import { creator } from "./actions";
 
-export const consumer = {
+export const consumers = {
   add: addError,
   clear: clearError
 };

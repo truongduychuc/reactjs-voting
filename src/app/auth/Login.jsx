@@ -27,7 +27,7 @@ import { connect } from "react-redux";
 import { authActions } from "./actions";
 import { bindActionCreators } from "redux";
 import { useHistory } from "react-router";
-import { consumer as errorConsumer } from "../errors";
+import { consumers as errorConsumer } from "../errors";
 
 
 const Login = ({loggingIn, authenticated, ...props}) => {
@@ -39,8 +39,8 @@ const Login = ({loggingIn, authenticated, ...props}) => {
   });
   const {email: initialEmail, password: initialPassword} = credential;
   const validationSchema = object().shape({
-    email: string().email().required('Email is required'),
-    password: string().required('Password is required')
+    email: string.trim().email().required('Email is required'),
+    password: string.trim().required('Password is required')
   });
   const submitHandler = ({email, password}, {setStatus, setSubmitting, setErrors}) => {
     setStatus();

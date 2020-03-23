@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardBody, Nav, NavItem, NavLink, TabContent, TabPane } from 'reactstrap';
 import PanelHeader from "../panel-header/PanelHeader";
 import { bindActionCreators } from "redux";
-import { consumer as errorConsumer } from "../errors";
+import { consumers as errorConsumer } from "../errors";
 import { connect } from 'react-redux';
 import { ConnectedList } from "./List";
 import { ConnectedNewUser as NewUser } from "./NewUser";
