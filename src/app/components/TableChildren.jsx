@@ -24,7 +24,7 @@ EmptyTableRow.defaultProps = {
 
 const TableRowsSkeleton = ({rows, cols}) => (
   range(rows).map((row, key) => (
-    <tr key={`skeletonRow${key}`}>
+    <tr className="table-data-skeleton" key={`skeletonRow${key}`}>
       <td
         className="table-rows-skeleton"
         style={{paddingTop: '1.5rem', paddingBottom: '1.5rem'}}

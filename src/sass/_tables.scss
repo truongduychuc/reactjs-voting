@@ -1,6 +1,9 @@
 .table {
   @include table-btn-link;
 
+  .table-data-skeleton:nth-of-type(odd) {
+    background-color: #DDDBDD;
+  }
 
   .table-rows-skeleton {
     position: relative;
@@ -21,7 +24,7 @@
                       rgba(#fff, 0.8) 60%,
                       rgba(#fff, 0));
 
-      animation: shimmer 5s infinite;
+      animation: shimmer 3s infinite;
       content: '';
     }
 

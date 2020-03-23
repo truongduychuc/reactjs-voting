@@ -2,6 +2,7 @@
 import Dashboard from "./app/dashboard/Dashboard";
 import UserList from "./app/users/UserList";
 import UserDetail from "./app/users/UserDetail";
+import { Teams } from "./app/teams/Teams";
 
 export const routes = [
     {
@@ -16,10 +17,20 @@ export const routes = [
     },
     {
         component: UserList,
-        icon: 'design_bullet-list-67',
+        icon: 'users_single-02',
         layout: '/vt',
-        name: 'User List',
+        name: 'Users',
         path: '/users',
+        haveLinks: {
+            sidebar: true
+        },
+    },
+    {
+        component: Teams,
+        layout: '/vt',
+        icon: 'design_palette',
+        name: 'Teams',
+        path: '/teams',
         haveLinks: {
             sidebar: true
         },

@@ -2,6 +2,7 @@
   .form-error {
     padding-left: $padding-small-horizontal;
     font-size: $font-size-small;
+    color: $danger-color ;
   }
 }
 
@@ -9,4 +10,13 @@
   font-size: .8571em;
   margin-bottom: 5px;
   color: #9a9a9a;
+}
+
+label.required {
+  &:after {
+    display: inline-block;
+    content: '*';
+    margin-left: 0.2rem;
+    color: $danger-color;
+  }
 }

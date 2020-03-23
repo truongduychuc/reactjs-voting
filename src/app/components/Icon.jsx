@@ -5,6 +5,13 @@
  */
 import React from 'react';
 
-export const NowUiIcon = ({icon, className}) => (
+const NowUiIcon = ({icon, className}) => (
   <i className={`now-ui-icons ${icon} ${className}`}/>
 );
+NowUiIcon.defaultProps = {
+  className: '',
+  icon: ''
+};
+export {
+  NowUiIcon
+}

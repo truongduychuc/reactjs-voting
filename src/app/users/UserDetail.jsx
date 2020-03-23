@@ -385,9 +385,10 @@ const UserDetail = ({
                               </Field>
                             </Col>
                           </Row>
-                          <div className="text-center text-md-right">
+                          <div className="mt-2 text-center">
                             <Button
-                              color="primary"
+                              className="rounded-pill"
+                              color="danger"
                               type="submit"
                               size="lg"
                               style={{fontWeight: "bold"}}
