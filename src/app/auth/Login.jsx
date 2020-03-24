@@ -39,8 +39,8 @@ const Login = ({loggingIn, authenticated, ...props}) => {
   });
   const {email: initialEmail, password: initialPassword} = credential;
   const validationSchema = object().shape({
-    email: string.trim().email().required('Email is required'),
-    password: string.trim().required('Password is required')
+    email: string().trim().email().required('Email is required'),
+    password: string().trim().required('Password is required')
   });
   const submitHandler = ({email, password}, {setStatus, setSubmitting, setErrors}) => {
     setStatus();

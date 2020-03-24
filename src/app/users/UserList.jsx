@@ -8,7 +8,7 @@ import { ConnectedList } from "./List";
 import { ConnectedNewUser as NewUser } from "./NewUser";
 
 
-const UserList = ({pushError}) => {
+const UserList = ({pushError, authUser}) => {
   const [activeTab, setActiveTab] = useState(1);
 
   const toggle = tab => {
@@ -18,6 +18,9 @@ const UserList = ({pushError}) => {
   };
   const isActive = tab => tab === activeTab;
   const classes = tab => isActive(tab) ? "active" : null;
+  const isAuthUserAdmin = () => {
+    return authUser.is_admin;
+  };
 
   return (
     <>
@@ -34,23 +37,31 @@ const UserList = ({pushError}) => {
                 List
               </NavLink>
             </NavItem>
-            <NavItem>
-              <NavLink
-                onClick={() => toggle(2)}
-                className={classes(2)}
-              >
-                Create New
-              </NavLink>
-            </NavItem>
+            {
+              isAuthUserAdmin() ? (
+                <NavItem>
+                  <NavLink
+                    onClick={() => toggle(2)}
+                    className={classes(2)}
+                  >
+                    Create New
+                  </NavLink>
+                </NavItem>
+              ) : null
+            }
           </Nav>
           <CardBody>
             <TabContent activeTab={activeTab}>
               <TabPane tabId={1}>
                 <ConnectedList/>
               </TabPane>
-              <TabPane tabId={2}>
-                <NewUser/>
-              </TabPane>
+              {
+                isAuthUserAdmin() ? (
+                  <TabPane tabId={2}>
+                    <NewUser/>
+                  </TabPane>
+                ) : null
+              }
             </TabContent>
           </CardBody>
         </Card>
@@ -59,9 +70,12 @@ const UserList = ({pushError}) => {
   )
 };
 
+const mapStateToProps = state => ({
+  authUser: state.authUser.current
+});
 
 const mapDispatchToProps = dispatch => bindActionCreators({
   pushError: err => errorConsumer.add(err)
 }, dispatch);
 
-export default connect(null, mapDispatchToProps)(UserList);
+export default connect(mapStateToProps, mapDispatchToProps)(UserList);
