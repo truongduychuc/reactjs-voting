@@ -10,4 +10,6 @@ const Toastr = () => {
     <div></div>
   )
 };
-export default Toastr;
+export {
+  Toastr
+}
