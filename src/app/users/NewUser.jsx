@@ -273,13 +273,14 @@ const NewUser = (props) => {
                       >
                         <option value="" disabled>Choose a team</option>
                         {
+                          teamOptions ?
                           teamOptions.map(team => (
                             <option
                               value={team.id}
                               key={`teamOption${team.id}`}>
                               {team.name}
                             </option>
-                          ))
+                          )) : null
                         }
                       </Input>
                       <Button onClick={getTeamOptions} id="teamOptionsRefresher" color="link">

@@ -8,7 +8,7 @@ export const consumers = {
       return roleService.getRoleOptions().then(options => {
         dispatch(creator.resolveRoleOptions(options));
       }).catch(error => {
-        dispatch(creator.failure(error));
+        dispatch(creator.failureOptions(error));
       })
     }
   }

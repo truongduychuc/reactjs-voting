@@ -12,8 +12,7 @@ import AdminLayout from './app/layouts/Admin';
 import Login from "./app/auth/Login";
 import { connect, Provider } from "react-redux";
 import { store } from './store';
-import "./sass/animate.css"
-import 'react-redux-toastr/lib/css/react-redux-toastr.min.css'
+import { ReduxToastr } from "./app/toastr";
 
 const history = createBrowserHistory();
 
@@ -37,6 +36,7 @@ const App = () => (
         </Route>
       </Switch>
     </Router>
+    {/*<ReduxToastr/>*/}
   </>
 );
 

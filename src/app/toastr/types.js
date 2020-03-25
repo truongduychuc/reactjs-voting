@@ -11,3 +11,11 @@ export const TRANSITIONS = {
   in: ['bounceIn', 'bounceInDown'],
   out: ['bounceOut', 'bounceOutUp']
 };
+export const POSITIONS = [
+  'top-right',
+  'top-left',
+  'top-center',
+  'bottom-left',
+  'bottom-center',
+  'bottom-right'
+];

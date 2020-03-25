@@ -1,4 +1,5 @@
 import { roleActionTypes } from "./types";
+import { createReducer } from "../utils/redux";
 
 const initialState = {
   requesting: false,
@@ -8,37 +9,33 @@ const initialState = {
   error: {}
 };
 
-export const roleReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case roleActionTypes.REQUEST_ROLE_LIST:
-      return {
-        ...state,
-        requesting: true
-      };
-    case roleActionTypes.RESOLVE_ROLE_LIST:
-      return {
-        ...state,
-        requesting: false,
-        list: action.list
-      };
-    case roleActionTypes.FAILURE:
-      return {
-        ...state,
-        requesting: false,
-        error: action.error
-      };
-    case roleActionTypes.REQUEST_ROLE_OPTIONS:
-      return {
-        ...state,
-        requestingOptions: true
-      };
-    case roleActionTypes.RESOLVE_ROLE_OPTIONS:
-      return {
-        ...state,
-        requestingOptions: false,
-        options: action.options
-      };
-    default:
-      return state;
-  }
-};
+export const roleReducer = createReducer(initialState, {
+  [roleActionTypes.REQUEST_ROLE_LIST]: state => ({
+    ...state,
+    requesting: true
+  }),
+  [roleActionTypes.RESOLVE_ROLE_LIST]: (state, list) => ({
+    ...state,
+    requesting: false,
+    list
+  }),
+  [roleActionTypes.REQUEST_ROLE_OPTIONS]: state => ({
+    ...state,
+    requestingOptions: true
+  }),
+  [roleActionTypes.RESOLVE_ROLE_OPTIONS]: (state, options) => ({
+    ...state,
+    requestingOptions: false,
+    options
+  }),
+  [roleActionTypes.FAILURE_LIST]: (state, error) => ({
+    ...state,
+    requesting: false,
+    error
+  }),
+  [roleActionTypes.FAILURE_OPTIONS]: (state, error) => ({
+    ...state,
+    requestingOptions: false,
+    error
+  })
+});

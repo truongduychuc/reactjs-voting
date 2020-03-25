@@ -1,6 +1,6 @@
 import { createReducer } from "./utils";
 import { types } from "./types";
-import { guid } from "react-redux-toastr/lib/utils";
+import { v4 } from 'uuid';
 import { config } from "./config";
 
 export let toastrCache = [];
@@ -9,13 +9,13 @@ const initialState = {
   toastrs: []
 };
 
-export const reducer  = createReducer(initialState, {
+export const reducer = createReducer(initialState, {
   [types.ADD_TOASTR]: (state, toastr) => {
     if (toastr.ignoreToastr) {
       return state;
     }
     const newToastr = {
-      id: guid(),
+      id: v4(),
       position: config.position,
       ...toastr
     };
@@ -47,7 +47,7 @@ export const reducer  = createReducer(initialState, {
     toastrCache = newState.toastrs;
     return newState;
   },
-  [types.CLEAN_TOASTR] : state => {
+  [types.CLEAN_TOASTR]: state => {
     toastrCache = [];
     return {
       ...state,

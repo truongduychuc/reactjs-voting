@@ -1,4 +1,5 @@
 import { actionTypes } from "./types";
+import { createReducer } from "../utils/redux";
 
 const initialState = {
   list: [],
@@ -9,37 +10,39 @@ const initialState = {
   requestingOptions: false
 };
 
-export const teamReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case actionTypes.REQUEST_TEAM_LIST:
-      return {
-        ...state,
-        requestingList: true
-      };
-    case actionTypes.RESOLVE_TEAM_LIST:
-      return {
-        ...state,
-        list: action.list,
-        requestingList: false
-      };
-    case actionTypes.FAILURE:
-      return {
-        ...state,
-        error: action.error,
-        requestingList: false
-      };
-    case actionTypes.REQUEST_TEAM_OPTIONS:
-      return {
-        ...state,
-        requestingOptions: true,
-      };
-    case actionTypes.RESOLVE_TEAM_OPTIONS:
-      return {
-        ...state,
-        requestingOptions: false,
-        options: action.options
-      };
-    default:
-      return state;
+export const teamReducer = createReducer(initialState, {
+  [actionTypes.REQUEST_TEAM_LIST] : state => {
+    return {
+      ...state,
+      requestingList: true
+    }
+  },
+  [actionTypes.RESOLVE_TEAM_LIST] : (state, list) => {
+    return {
+      ...state,
+      requestingList: false,
+      list
+    }
+  },
+  [actionTypes.REQUEST_TEAM_OPTIONS]: state => {
+    return {
+      ...state,
+      requestingOptions: true
+    }
+  },
+  [actionTypes.RESOLVE_TEAM_OPTIONS]: (state, options) => {
+    return {
+      ...state,
+      requestingOptions: false,
+      options
+    }
+  },
+  [actionTypes.FAILURE]: (state, error) => {
+    return {
+      ...state,
+      requestingOptions: false,
+      requestingList: false,
+      error
+    }
   }
-};
+});
