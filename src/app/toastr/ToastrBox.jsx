@@ -310,7 +310,9 @@ class ToastrBox extends React.Component {
 
   _removeToastr = () => {
     if (!this.isHiding) {
-
+      this._setIsHiding(true);
+      this._setTransition(true, false);
+      onCSSTransitionEnd(this.toastrBoxElement, this._onAnimationComplete);
     }
   };
 

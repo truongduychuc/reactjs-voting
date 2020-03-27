@@ -43,10 +43,30 @@ export const createReducer = (initialState, fnMap) => {
   }
 };
 const whichAnimationEvent = () => {
+  let t;
+  const el = document.createElement('fakeelement');
+  const transitions = {
+    animation: 'animationend',
+    oanimation: 'oanimationend',
+    MSAnimation: 'MSAnimationEnd',
+    webkitAnimation: 'webkitAnimationEnd'
+  };
 
+  for (t in transitions) {
+    if (el.style[t] !== undefined) {
+      return transitions[t];
+    }
+  }
 };
-const createNewEvent = animationEnd => {
-
+const createNewEvent = evtName => {
+  let event;
+  if (typeof (Event) === 'function') {
+    event = new Event(evtName);
+  } else {
+    event = document.createEvent('Event');
+    event.initEvent(evtName, true, true);
+  }
+  return event;
 };
 
 export const toastrWarn = message => {
@@ -87,7 +107,9 @@ export const updateConfig = obj => {
     }
   })
 };
-
+export const isString = val => {
+  return typeof val == 'string';
+};
 export const mapToToastrMessage = (type, array) => {
   const obj = {};
   obj.type = type;
@@ -99,10 +121,24 @@ export const mapToToastrMessage = (type, array) => {
   }
 
   if (!obj.options.hasOwnProperty('removeOnHover')) {
-    obj.options.removeOnHover = true;
-    if (type === 'message') {
-      obj.options.removeOnHover = false;
-    }
+    obj.options.removeOnHover = type !== 'message';
   }
+
+  if (!obj.options.hasOwnProperty('showCloseButton')) {
+    obj.options.showCloseButton = true;
+  }
+
+  if (type === 'message' && !obj.options.hasOwnProperty('timeOut')) {
+    obj.options.timeOut = 0;
+  }
+  if (isString(array[0]) && isString(array[1])) {
+    obj.title = array[0];
+    obj.message = array[1];
+  } else if (isString(array[0]) && !isString(array[1])) {
+    obj.title = array[0];
+  } else {
+    obj.message = array[0];
+  }
+  return obj;
 };
 

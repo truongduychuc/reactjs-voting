@@ -5,7 +5,8 @@
  */
 import React from 'react';
 import PanelHeader from "../panel-header/PanelHeader";
-import {Card, CardBody, CardHeader, Col, Row} from 'reactstrap';
+import {Card, CardBody, CardHeader, Col, Row, Button} from 'reactstrap';
+import {toastr} from "../toastr";
 
 
 const Dashboard = () => {
@@ -22,7 +23,9 @@ const Dashboard = () => {
                                 </h5>
                             </CardHeader>
                             <CardBody>
-
+                                <Button onClick={() => toastr.success('Hello World')}>
+                                    Hello
+                                </Button>
                             </CardBody>
                         </Card>
                     </Col>

@@ -12,6 +12,6 @@ const rootReducer = combineReducers({
   authUser,
   teamReducer,
   roleReducer,
-  toastrReducer
+  toastr: toastrReducer
 });
 export default rootReducer;

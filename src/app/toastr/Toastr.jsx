@@ -10,6 +10,8 @@ import cn from 'classnames';
 import { connect } from 'react-redux';
 import { ToastrBox } from "./ToastrBox";
 import { updateConfig } from "./utils";
+import { EE } from "./emitter";
+import { creator } from './actions';
 
 class Toastr extends React.Component {
   static propTypes = {
@@ -54,6 +56,22 @@ class Toastr extends React.Component {
     updateConfig(props);
   }
 
+  componentDidMount() {
+    const {add, clean, removeByType, remove} = this.props;
+    EE.on('add/toastr', add);
+    EE.on('clean/toastr', clean);
+    EE.on('removeByType/toastr', removeByType);
+    EE.on('remove/toastr', remove);
+  }
+
+  componentWillUnmount() {
+    EE.removeListener('toastr/confirm');
+    EE.removeListener('add/toastr');
+    EE.removeListener('clean/toastr');
+    EE.removeListener('removeByType/toastr');
+    EE.removeListener('remove/toastr')
+    this.toastrFired = {};
+  }
 
   _addToMemory = id => {
     this.toastrFired[id] = true;
@@ -107,20 +125,22 @@ class Toastr extends React.Component {
     const style = width ? {width: width} : {};
     return (
       <div>
-        {this.toastrPositions.map(position => (
-          <div key={position} className={position} style={style}>
-            {this._renderToastrForPosition(position)}
-          </div>
-        ))
+        {this.toastrPositions.map(position => {
+          return (
+            <div key={position} className={position} style={style}>
+              {this._renderToastrForPosition(position)}
+            </div>
+          )
+        })
         }
       </div>
     )
   };
 
   render() {
-    const {className, toastr} = this.props;
+    const {className} = this.props;
     return (
-      <div className={cn('toastr', className)} aria-live="assertive">
+      <div className={cn('redux-toastr', className)} aria-live="assertive">
         {this._renderToastrs()}
       </div>
     );
@@ -130,7 +150,7 @@ class Toastr extends React.Component {
 const mapStateToProps = (state, ownProps) => ({
   toastr: ownProps.getState ? ownProps.getState(state) : state.toastr
 });
-const ReduxToastr = connect(mapStateToProps)(Toastr);
+const ReduxToastr = connect(mapStateToProps, creator)(Toastr);
 
 export {
   ReduxToastr

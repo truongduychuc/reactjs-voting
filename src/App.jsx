@@ -36,7 +36,7 @@ const App = () => (
         </Route>
       </Switch>
     </Router>
-    {/*<ReduxToastr/>*/}
+    <ReduxToastr/>
   </>
 );
 
