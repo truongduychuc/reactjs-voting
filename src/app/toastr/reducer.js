@@ -22,7 +22,7 @@ export const reducer = createReducer(initialState, {
     if (!newToastr.a11yId && toastr && toastr.hasOwnProperty('id') && !toastr.hasOwnProperty('a11yId')) {
       newToastr.a11yId = toastr.id;
     }
-    let newState = state;
+    let newState = {...state};
     if (!config.newestOnTop) {
       newState.toastrs.push(newToastr);
     } else {

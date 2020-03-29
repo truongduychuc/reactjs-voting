@@ -14,6 +14,7 @@ import { EE } from "./emitter";
 import { creator } from './actions';
 
 class Toastr extends React.Component {
+  static displayName = "ReduxToastr";
   static propTypes = {
     toastr: PropTypes.object,
     position: PropTypes.oneOf(POSITIONS),
@@ -28,8 +29,8 @@ class Toastr extends React.Component {
   static defaultProps = {
     position: 'top-right',
     newestOnTop: true,
+    progressBar: true,
     timeOut: 5000,
-    progressBar: false,
     transitionIn: TRANSITIONS.in[0],
     transitionOut: TRANSITIONS.out[0],
     preventDuplicates: false,
@@ -40,6 +41,7 @@ class Toastr extends React.Component {
       cancelText: 'Cancel'
     }
   };
+
   toastrFired = {};
 
   toastrPositions = [
@@ -69,7 +71,7 @@ class Toastr extends React.Component {
     EE.removeListener('add/toastr');
     EE.removeListener('clean/toastr');
     EE.removeListener('removeByType/toastr');
-    EE.removeListener('remove/toastr')
+    EE.removeListener('remove/toastr');
     this.toastrFired = {};
   }
 
@@ -78,7 +80,8 @@ class Toastr extends React.Component {
   };
 
   _renderToastrForPosition = position => {
-    const {toastrs, progressBar, transitionIn, transitionOut, closeOnToastrClick} = this.props.toastr;
+    const {toastrs} = this.props.toastr;
+
     if (toastrs) {
       return toastrs
         .filter(item => item.position === position)
@@ -86,10 +89,10 @@ class Toastr extends React.Component {
           const mergedItem = {
             ...item,
             options: {
-              progressBar,
-              transitionIn,
-              transitionOut,
-              closeOnToastrClick,
+              progressBar: this.props.progressBar,
+              transitionIn: this.props.transitionIn,
+              transitionOut: this.props.transitionOut,
+              closeOnToastrClick: this.props.closeOnToastrClick,
               ...item.options
             }
           };
@@ -125,13 +128,11 @@ class Toastr extends React.Component {
     const style = width ? {width: width} : {};
     return (
       <div>
-        {this.toastrPositions.map(position => {
-          return (
-            <div key={position} className={position} style={style}>
-              {this._renderToastrForPosition(position)}
-            </div>
-          )
-        })
+        {this.toastrPositions.map(position => (
+          <div key={position} className={position} style={style}>
+            {this._renderToastrForPosition(position)}
+          </div>
+        ))
         }
       </div>
     )
@@ -148,7 +149,7 @@ class Toastr extends React.Component {
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  toastr: ownProps.getState ? ownProps.getState(state) : state.toastr
+  toastr: state.toastr
 });
 const ReduxToastr = connect(mapStateToProps, creator)(Toastr);
 

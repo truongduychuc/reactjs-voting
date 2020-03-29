@@ -1,5 +1,6 @@
 import { authActionTypes } from "./types";
 import { Ls } from "../../_helpers";
+import { createReducer } from "../utils";
 
 const initialPayload = {
   access: !!Ls.get('auth.access') ? Ls.get('auth.access') : '',
@@ -21,24 +22,19 @@ const emptyState = {
   loggingIn: false
 };
 
-export const authentication = (state = initialState, action) => {
-  switch (action.type) {
-    case authActionTypes.LOGIN_REQUEST:
-      return {
-        ...state, ...{
-          loggingIn: true
-        }
-      };
-    case authActionTypes.LOGIN_SUCCESS:
-      return {
-        ...state, ...{
-          authenticated: true,
-          payload: action.payload,
-          loggingIn: false,
-        }
-      };
-    case authActionTypes.LOGIN_FAILURE:
-    /*const {response } = action.error;
+export const authentication = createReducer(initialState, {
+  [authActionTypes.LOGIN_REQUEST]: state => ({
+    ...state,
+    loggingIn: true
+  }),
+  [authActionTypes.LOGIN_SUCCESS]: (state, payload) => ({
+    ...state,
+    authenticated: true,
+    payload,
+    loggingIn: false
+  }),
+  [authActionTypes.LOGIN_FAILURE]: (state, res) => {
+    const {response } = res;
     let error = {};
     if (response) {
       const {data, status} = response;
@@ -49,16 +45,10 @@ export const authentication = (state = initialState, action) => {
     }
     return {
       ...state,
-      ...{
-        authenticated: false,
-        error,
-        loggingIn: false
-      }
-    };*/
-    // fall through
-    case authActionTypes.LOG_OUT:
-      return emptyState;
-    default:
-      return state;
-  }
-};
+      authenticated: false,
+      error,
+      loggingIn: false
+    }
+  },
+  [authActionTypes.LOG_OUT]: state => emptyState
+});

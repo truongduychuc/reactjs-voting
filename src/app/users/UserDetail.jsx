@@ -114,7 +114,6 @@ const UserDetail = ({
     }
   }, []);
 
-
   const getTeamList = () => {
     apiService.get(apiUrls.API.TEAMS).then(list => {
       if (isMountedRef.current) {

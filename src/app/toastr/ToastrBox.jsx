@@ -42,7 +42,7 @@ class ToastrBox extends React.Component {
     if (this.props.inMemory[item.id]) {
       return;
     }
-    const timeOut = this._getItemTimeout();
+    const timeOut = this._getItemTimeOut();
     if (timeOut) {
       this._setIntervalId(setTimeout(this._removeToastr, timeOut));
     }
@@ -86,7 +86,7 @@ class ToastrBox extends React.Component {
     } = this.props.item;
 
     return (
-      <div>
+      <div className="toastr-box">
         <div className="rrt-title">
           {title}
           {this.renderCloseButton()}
@@ -118,15 +118,9 @@ class ToastrBox extends React.Component {
     }
 
     return (
-      <div>
-        <div className="rrt-left-container">
-          <div className="rrt-holder">
-            {this.renderIcon()}
-          </div>
-        </div>
+      <div className={cn('toastr-box', type && 'box-' + type)}>
         {options.status && type === 'light' && <div className={cn('toastr-status', options.status)}/>}
-        <div className="rrt-middle-container" role="alertdialog" {...ariaAttributes}>
-          {title && <div id={`dialogTitle-${this.id}`} className="rrt-title">{{title}}</div>}
+        <div className="rrt-body" role="alertdialog" {...ariaAttributes}>
           {message && <div id={`dialogDesc-${this.id}`} className="rrt-text">{message}</div>}
           {options.component && this.renderSubComponent()}
         </div>
@@ -187,7 +181,7 @@ class ToastrBox extends React.Component {
   };
 
   handleClickCloseButton = e => {
-    let {onCloseButtonClick} = this.props.items.options;
+    let {onCloseButtonClick} = this.props.item.options;
 
     e.stopPropagation();
     this.ignoreIsHiding = true;
@@ -272,7 +266,7 @@ class ToastrBox extends React.Component {
       options.onShowComplete();
     }
   };
-  _getItemTimeout = () => {
+  _getItemTimeOut = () => {
     const {item} = this.props;
     let {timeOut} = item.options;
     if (typeof timeOut === 'undefined') {
@@ -317,7 +311,7 @@ class ToastrBox extends React.Component {
   };
 
   render() {
-    const {options, type} = this.props.item;
+    const {options} = this.props.item;
     let toastrClickAtributes = {};
     if (this.isToastrClickable) {
       toastrClickAtributes.role = 'button';
@@ -332,7 +326,6 @@ class ToastrBox extends React.Component {
         className={cn(
           'toastr',
           'animated',
-          'rrt-' + type,
           options.className
         )}
         onMouseEnter={this.mouseEnter}
