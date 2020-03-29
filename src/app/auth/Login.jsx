@@ -29,6 +29,18 @@ import { bindActionCreators } from "redux";
 import { useHistory } from "react-router";
 import { consumers as errorConsumer } from "../errors";
 
+const LoadingBackDrop = (props) => {
+  const {loading} = props;
+  return (
+    loading ? (
+      <div className="loading-backdrop">
+        <div className="loading-box">
+          <img src="/assets/img/loading_icon.svg" />
+        </div>
+      </div>
+    ) : null
+  )
+};
 
 const Login = ({loggingIn, authenticated, ...props}) => {
   const [credential] = useState({
@@ -78,6 +90,7 @@ const Login = ({loggingIn, authenticated, ...props}) => {
                   lg={4}
                   className="ml-auto mr-auto"
                 >
+                  <LoadingBackDrop loading={loggingIn} />
                   <Formik
                     initialValues={{email: initialEmail, password: initialPassword}}
                     onSubmit={submitHandler}

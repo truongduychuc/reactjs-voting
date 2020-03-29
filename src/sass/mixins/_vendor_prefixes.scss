@@ -44,6 +44,13 @@
   -o-transform: translate3d($value, 0, 0);
   transform: translate3d($value, 0, 0);
 }
+@mixin translateY($value) {
+  -webkit-transform: translate3d(0, $value, 0);
+  -moz-transform: translate3d(0, $value, 0);
+  -ms-transform: translate3d(0, $value, 0);
+  -o-transform: translate3d(0, $value, 0);
+  transform: translate3d(0, $value, 0);
+}
 
 @mixin icon-gradient($color, $bottomColor: #000) {
   background: $color;
@@ -59,6 +66,13 @@
   -ms-transition: all $time $type;
   -o-transition: all $time $type;
   transition: all $time $type;
+}
+@mixin transition-all($time) {
+  -webkit-transition: all $time;
+  -moz-transition: all $time;
+  -ms-transition: all $time;
+  -o-transition: all $time;
+  transition: all $time;
 }
 
 @mixin panel-gradient($color) {
@@ -459,7 +473,6 @@
   -webkit-background-size: $size;
   background-size: $size;
 }
-
 @mixin transition-input-focus-color() {
   -webkit-transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;
   -moz-transition: color .3s ease-in-out, border-color .3s ease-in-out, background-color .3s ease-in-out;

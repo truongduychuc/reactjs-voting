@@ -9,10 +9,10 @@ import { createBrowserHistory } from 'history';
 import PrivateRoute from "./routes/PrivateRoute";
 import NotFound from "./routes/NotFound";
 import AdminLayout from './app/layouts/Admin';
-import Login from "./app/auth/Login";
 import { connect, Provider } from "react-redux";
 import { store } from './store';
 import { ReduxToastr } from "./app/toastr";
+import LoginPage from "./app/auth/NewLogin";
 
 const history = createBrowserHistory();
 
@@ -26,7 +26,7 @@ const App = () => (
         />
         <Route
           path="/auth/login"
-          component={Login}
+          component={LoginPage}
         />
         <Route exact path="/">
           <Redirect to="/vt"/>
