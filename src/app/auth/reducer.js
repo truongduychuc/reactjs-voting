@@ -1,14 +1,14 @@
-import { authActionTypes } from "./types";
+import { authActionTypes, payloadKeys } from "./types";
 import { Ls } from "../../_helpers";
 import { createReducer } from "../utils";
 
 const initialPayload = {
-  access: !!Ls.get('auth.access') ? Ls.get('auth.access') : '',
-  refresh: !!Ls.get('auth.refresh') ? Ls.get('auth.refresh') : '',
-  expiresIn: !!Ls.get('auth.expires_in') ? Number(Ls.get('auth.expires_in')) : 0
+  access: !!Ls.get(payloadKeys.TOKEN) ? Ls.get(payloadKeys.TOKEN) : '',
+  refresh: !!Ls.get(payloadKeys.REFRESH_TOKEN) ? Ls.get(payloadKeys.REFRESH_TOKEN) : '',
+  expiresIn: !!Ls.get(payloadKeys.EXPIRES) ? Number(Ls.get(payloadKeys.EXPIRES)) : 0
 };
 const initialState = {
-  authenticated: !!Ls.get('auth.access'),
+  authenticated: !!Ls.get(payloadKeys.TOKEN),
   payload: initialPayload,
   loggingIn: false
 };

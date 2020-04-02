@@ -8,12 +8,14 @@ import { ConnectedList } from "./List";
 import { ConnectedNewUser as NewUser } from "./NewUser";
 
 
-const UserList = ({pushError, authUser}) => {
+const UserList = (props) => {
+  const {authUser} = props;
   const [activeTab, setActiveTab] = useState(1);
+
 
   const toggle = tab => {
     if (activeTab !== tab) {
-      setActiveTab(tab)
+      setActiveTab(tab);
     }
   };
   const isActive = tab => tab === activeTab;

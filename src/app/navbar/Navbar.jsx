@@ -10,28 +10,35 @@ import {
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownToggle,
+  DropdownToggle, FormGroup, Input, Label, Modal, ModalBody,
   Nav,
   Navbar,
   NavbarBrand,
   NavbarToggler
 } from 'reactstrap';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { routes } from "../../routes";
 import { dom } from "../../_helpers";
 import { authActions } from "../auth";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { Form, Formik, Field } from "formik";
 
 
 class DemoNavbar extends React.Component {
   state = {
     color: 'transparent',
     isOpen: false,
-    dropdownOpen: false
+    dropdownOpen: false,
+    isModalOpen: false,
   };
   sidebarToggle = React.createRef();
   _isMounted = false;
+  initialForm = {
+    current_password: '',
+    password: '',
+    password_confirmation: ''
+  };
 
   componentDidMount() {
     window.onresize = this.updateColor;
@@ -108,8 +115,11 @@ class DemoNavbar extends React.Component {
                   </p>
                 </DropdownToggle>
                 <DropdownMenu right>
-                  <DropdownItem tag="a" to="/admin/user-profile">
+                  <DropdownItem tag={Link} to="/vt/user-profile">
                     Profile
+                  </DropdownItem>
+                  <DropdownItem onClick={this.openModal}>
+                    Change password
                   </DropdownItem>
                   <DropdownItem onClick={() => {
                     logout();
@@ -118,6 +128,33 @@ class DemoNavbar extends React.Component {
               </Dropdown>
             </Nav>
           </Collapse>
+          <Modal
+            isOpen={this.state.isModalOpen}
+            size="lg"
+            centered
+            toggle={this.toggleModal}
+          >
+            <ModalBody>
+              <Formik
+                initialValues={this.initialForm}
+              >
+                {() => (
+                  <Form>
+                    <Field name="current_password">
+                      {({field, meta}) => (
+                        <FormGroup>
+                          <Label>
+                            Current password
+                          </Label>
+                          <Input type="password" {...field} />
+                        </FormGroup>
+                      )}
+                    </Field>
+                  </Form>
+                )}
+              </Formik>
+            </ModalBody>
+          </Modal>
         </Container>
       </Navbar>
     );
@@ -148,6 +185,18 @@ class DemoNavbar extends React.Component {
     this.setState({
       isOpen: !isOpen
     })
+  };
+  openModal = () => {
+    this.setState(prev => ({
+      ...prev,
+      isModalOpen: true
+    }));
+  };
+  toggleModal = () => {
+    this.setState(prev => ({
+      ...prev,
+      isModalOpen: !prev.isModalOpen
+    }));
   };
   getBrand = () => {
     const {location} = this.props;

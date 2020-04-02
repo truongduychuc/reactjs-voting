@@ -33,6 +33,7 @@ const List = ({pushError}) => {
     page: 1
   });
   const isMountedRef = useIsMountedRef();
+  const isMounted = () => !!isMountedRef.current;
   // constants
   const tableFields = [
     {
@@ -126,8 +127,9 @@ const List = ({pushError}) => {
   // effects
   useEffect(() => {
     getUserList();
+    return () => setRequestingUsers(false);
     // eslint-disable-next-line
-  }, [meta.page, isMountedRef, queryParams, meta.per_page]);
+  }, [meta.page, isMountedRef.current, queryParams, meta.per_page]);
 
   useEffect(() => {
     roleFilterProvider();
@@ -161,14 +163,16 @@ const List = ({pushError}) => {
   };
 
   const onPerPageChanged = value => {
-    setMeta(prev => ({
-      ...prev,
-      per_page: value
-    }))
+    if (isMounted()) {
+      setMeta(prev => ({
+        ...prev,
+        per_page: value
+      }))
+    }
   };
   const roleFilterProvider = () => {
     apiService.getData(apiUrls.API.ROLE_FILTER_PROVIDER).then(data => {
-      if (isMountedRef.current) {
+      if (isMounted()) {
         setRoleOptions(data);
       }
     }).catch(err => {
@@ -177,10 +181,12 @@ const List = ({pushError}) => {
   };
 
   const getUserList = () => {
-    setRequestingUsers(true);
+    if (isMounted()) {
+      setRequestingUsers(true);
+    }
     apiService.get(apiUrls.API.USERS, resolveParams())
       .then(res => {
-        if (isMountedRef.current) {
+        if (isMounted()) {
           const {data, meta: serverMeta} = res;
           setUsers(data);
           setMeta(m => ({
@@ -194,7 +200,9 @@ const List = ({pushError}) => {
       }).catch(err => {
       pushError(err);
     }).finally(() => {
-      setRequestingUsers(false);
+      if (isMounted()) {
+        setRequestingUsers(false);
+      }
     });
   };
 
@@ -234,12 +242,32 @@ const List = ({pushError}) => {
     pageRangeDisplayed: 2,
     onPageChange: (selectedItem) => {
       setMeta({
-        ...meta, ...{
-          page: selectedItem.selected + 1
-        }
+        ...meta,
+        page: selectedItem.selected + 1
       })
     }
   };
+  const onSearchInputChanged = value => {
+    if (isMounted()) {
+      setQueryParams(prevState => (
+        {
+          ...prevState,
+          _sK: value,
+        }
+      ))
+    }
+  };
+  const onFilterChanged = value => {
+    if (isMounted()) {
+      setQueryParams(prevState => (
+        {
+          ...prevState,
+          _rK: value
+        }
+      ))
+    }
+  };
+
   return (
     <>
       <div style={{fontSize: '0.75rem'}}>
@@ -252,32 +280,18 @@ const List = ({pushError}) => {
       <Row>
         <Col className='mb-2' md={4} xl={3}>
           <SearchInput
-            onChange={value => {
-              setQueryParams(prevState => (
-                {
-                  ...prevState,
-                  _sK: value,
-                }
-              ))
-            }}
+            onChange={onSearchInputChanged}
           />
         </Col>
         <Col className='mb-2' md={3} xl={2}>
           <Filter
             options={roleOptions}
-            onSelectionChange={value => {
-              setQueryParams(prevState => (
-                {
-                  ...prevState,
-                  _rK: value
-                }
-              ))
-            }}
+            onSelectionChange={onFilterChanged}
           />
         </Col>
         <Col className="mb-2" md={2}>
           <Button onClick={getUserList} title="Refresh" color="link">
-            <NowUiIcon icon="loader_refresh" />
+            <NowUiIcon icon="loader_refresh"/>
           </Button>
         </Col>
       </Row>

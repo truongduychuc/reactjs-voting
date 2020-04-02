@@ -17,7 +17,10 @@ class ApiUrls {
     AWARD_ID: '/api/awards/',
     LOGIN: '/oauth/token',
     LOGOUT: '/oauth/logout',
-    ROLE_FILTER_PROVIDER: '/api/user/role-form-resolver'
+    ROLE_FILTER_PROVIDER: '/api/user/role-form-resolver',
+    EMAIL_EXIST: '/api/user/email-exist/',
+    USERNAME_EXIST: '/api/user/username-exist/',
+    GENDERS: '/api/user/genders'
   };
 
   constructor() {

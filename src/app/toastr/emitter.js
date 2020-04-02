@@ -1,12 +1,25 @@
 import EventEmitter from "eventemitter3";
 import { mapToToastrMessage } from "./utils";
+import { toastrType } from "./types";
 
 const emitter = new EventEmitter();
 const addToToastr = (type, array) => emitter.emit('add/toastr', mapToToastrMessage(type, array));
 let actions = {};
-['primary', 'light', 'message', 'info', 'success', 'warning', 'error'].forEach(item => {
-  actions[item] = (...args) => addToToastr(item, args);
-});
+
+const mapToastrTypesToActions = () => {
+  let obj = {};
+  const actionTypes = Object.keys(toastrType);
+  if (actionTypes.length === 0) {
+    console.warn('There is no toastr type found in the collection, inspect the toastr type to check again!');
+  }
+  actionTypes.forEach(key => {
+   obj[toastrType[key]] = (...args) => addToToastr(toastrType[key], args);
+  });
+  return obj;
+};
+
+
+actions = mapToastrTypesToActions();
 actions.clean = () => emitter.emit('clean/toastr');
 
 

@@ -155,6 +155,10 @@
   }
 }
 
+textarea.form-control {
+  border-radius: 16px;
+}
+
 .has-success,
 .has-danger {
   &:after {

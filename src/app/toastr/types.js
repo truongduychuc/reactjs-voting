@@ -19,3 +19,12 @@ export const POSITIONS = [
   'bottom-center',
   'bottom-right'
 ];
+export const toastrType = {
+  PRIMARY: 'primary',
+  SUCCESS: 'success',
+  WARNING: 'warning',
+  ERROR: 'error',
+  INFO: 'info',
+  MESSAGE: 'message',
+  LIGHT: 'light'
+};

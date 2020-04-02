@@ -10,7 +10,7 @@ body.toastr-confirm-active {
   .top-left, .top-right, .top-center, .bottom-left, .bottom-right, .bottom-center {
     width: $toastr-width;
     position: fixed;
-    z-index: 9999;
+    z-index: 1050;
     padding: 0 $defaultSpace;
   }
 
@@ -61,23 +61,44 @@ body.toastr-confirm-active {
     box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.4);
 
     .toastr-box {
-      padding: 10px 20px;
+      .rrt-body {
+        color: $white-color;
+        font-weight: 600;
+      }
 
-      &.box-primary:before {
+      &.box-primary {
         background-color: #2ca8ff;
       }
-      &.box-success:before {
+
+      &.box-success {
         background-color: $success-color;
       }
 
-      &:before {
-        content: "";
-        position: absolute;
-        height: 100%;
-        width: 5px;
-        top: 0;
-        left: 0;
-        display: block;
+      &.box-warning {
+        background-color: $warning-color;
+      }
+
+      &.box-error {
+        background-color: $danger-color;
+      }
+
+      &.box-info {
+        background-color: $info-color;
+      }
+
+      &.box-light {
+        background-color: $light-gray;
+
+        .rrt-body {
+          color: $black-color;
+        }
+      }
+
+      &.box-message {
+        background-color: $white-color;
+        .rrt-body {
+          color:  $black-color;
+        }
       }
     }
 
@@ -108,30 +129,21 @@ body.toastr-confirm-active {
     }
 
     // my custom
-    .rrt-header {
-      padding: 5px 10px;
-      color: $white-color;
-      border: none;
-
-      &.rrt-success {
-        background-color: $success-color;
-      }
-
-      &.rrt-primary {
-        background-color: $primary-color;
-      }
-
-      .rrt-title {
-        margin: 0;
-        padding: 0;
-        font-weight: bold;
-      }
-    }
-
     .rrt-body {
-      padding: 5px 10px;
+      padding: 10px 30px 10px 20px;
       height: 100%;
-      font-weight: 700;
+
+      display: flex;
+      font-weight: 500;
+      font-size: 0.93rem;
+
+      .rrt-icon {
+        flex-basis: 18px;
+        padding-right: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
     }
 
     .rrt-left-container, .rrt-right-container {
@@ -187,7 +199,8 @@ body.toastr-confirm-active {
     }
 
     .close-toastr {
-      width: 10%;
+      //width: 10%;
+      width: 14%;
       height: 100%;
       position: absolute;
       top: 0;

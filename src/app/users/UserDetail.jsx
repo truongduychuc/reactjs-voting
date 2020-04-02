@@ -20,38 +20,44 @@ import {
   Row,
   TabContent,
   TabPane,
-  Container
+  Container,
+  UncontrolledTooltip, UncontrolledDropdown, DropdownMenu, DropdownToggle, DropdownItem
 } from 'reactstrap';
-import { NowUiIcon } from "../components";
+import { FormError, NowUiIcon } from "../components";
 import { apiService } from "../../services/api";
 import { useIsMountedRef } from "../../hooks";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { Field, Form, Formik } from "formik";
+import { faCamera, faArrowLeft, faEllipsisH } from '@fortawesome/free-solid-svg-icons';
+import { Field, Form, Formik, useFormikContext } from "formik";
 import { bindActionCreators } from "redux";
 import { consumer } from "./consumers";
 import { connect } from 'react-redux';
-import { apiUrls } from "../../services";
-import { consumer as errorConsumer } from "../errors";
+import { apiUrls, errorService } from "../../services";
+import { consumers as errorConsumer } from "../errors";
 import { creator } from "./actions";
+import * as yup from 'yup';
+import { validationMessage, _general } from "../../_helpers";
+import { userService } from "./services";
+import { toastr } from "../toastr";
+import cn from 'classnames';
 
-const UserDetail = ({
-                      updateUser,
-                      currentUser,
-                      getCurrentUser,
-                      userInfoLoading,
-                      pushError,
-                      ...props
-                    }) => {
+const UserDetail = (props) => {
+  const {
+    updateUser,
+    currentUser,
+    getCurrentUser,
+    userInfoLoading,
+    pushError,
+  } = props;
   const [activeTab, setActiveTab] = useState(1);
   const [isEditing, setEditing] = useState(false);
-  const [teamList, setTeamList] = useState([]);
-
+  const [genderOptions, setGenderOptions] = useState([]);
   const isMountedRef = useIsMountedRef();
 
   const changeTab = tabKey => {
     setActiveTab(tabKey)
   };
+  const isMounted = () => !!isMountedRef.current;
   const isActive = key => key === activeTab;
   const activeClass = key => isActive(key) ? 'active' : '';
   const backToView = () => {
@@ -71,7 +77,8 @@ const UserDetail = ({
     address,
     team_name,
     role_name,
-    team_id
+    team_id,
+    gender
   } = user;
   const initialForm = {
     first_name: first_name ? first_name : '',
@@ -79,8 +86,31 @@ const UserDetail = ({
     english_name: english_name ? english_name : '',
     phone: phone ? phone : '',
     address: address ? address : '',
-    team_id: team_id != null ? team_id : ''
+    team_id: team_id != null ? team_id : '',
+    gender
   };
+  const validationSchema = yup.object().shape({
+    first_name: yup.string().trim()
+      // eslint-disable-next-line no-template-curly-in-string
+      .max(100, validationMessage.first_name.max)
+      .required(validationMessage.first_name.required),
+    last_name: yup.string().trim()
+      .max(100, validationMessage.last_name.max)
+      .required(validationMessage.last_name.required),
+    english_name: yup.string().trim()
+      .max(100, validationMessage.english_name.max),
+    team_id: yup.number()
+      .integer()
+      .positive()
+      .required(validationMessage.team_id.required),
+    phone: yup.string().trim()
+      .max(50, validationMessage.phone.max)
+      .matches(/^(\+?\d){0,50}$/, validationMessage.phone.only_number),
+    address: yup.string().trim()
+      .max(255, validationMessage.address.max),
+    gender: yup.number()
+      .integer()
+  });
 
   const tabs = [
     {
@@ -101,38 +131,180 @@ const UserDetail = ({
   ];
 
   useEffect(() => {
-    if (isMountedRef.current) {
-      getTeamList();
-    }
-
-    // eslint-disable-next-line
-  }, [isMountedRef]);
-
-  useEffect(() => {
     if (!userInfoLoading) {
       getCurrentUser();
     }
+    getGenders();
   }, []);
 
-  const getTeamList = () => {
-    apiService.get(apiUrls.API.TEAMS).then(list => {
-      if (isMountedRef.current) {
-        setTeamList(list);
+  const getGenders = () => {
+    userService.getGenderOptions().then(genders => {
+      if (isMounted()) {
+        setGenderOptions(genders);
       }
     }).catch(error => {
       pushError(error);
-    });
+    })
   };
 
-  const submitHandler = (data, {setStatus, setSubmitting, setErrors}) => {
+  const submitHandler = (data, methods) => {
+    const {setStatus, setSubmitting, setErrors, setValues} = methods;
     setStatus();
     setSubmitting(true);
-    apiService.post(apiUrls.API.UPDATE_PROFILE, data).then(success => {
-      updateUser(success.data);
+    apiService.post(apiUrls.API.UPDATE_PROFILE, data).then(({data, message}) => {
+      // call redux to update current user
+      updateUser(data);
+      toastr.success(message);
+      setValues(initialForm);
       backToView();
     }).catch(err => {
-      setErrors();
+      toastr.error(err.message);
+      setErrors(errorService.transformValidationError(err, Object.keys(initialForm)));
+    }).finally(() => {
+      setSubmitting(false);
     });
+  };
+  const ProfileForm = () => {
+    const {isValid, submitCount, isSubmitting} = useFormikContext();
+    console.log(_general.isNotEmptyString('abc'));
+    return (
+      <Form className={cn('profile-form', isSubmitting && 'submitting')}>
+        {
+          isSubmitting && <div className="pending-screen"/>
+        }
+        <Row>
+          <Col md={6}>
+            <h6>Basic</h6>
+            <div className="mb-5">
+              <FormGroup>
+                <Label id="emailInput">Email</Label>
+                <Input disabled defaultValue={email}/>
+                <UncontrolledTooltip target="emailInput">Can not change this field</UncontrolledTooltip>
+              </FormGroup>
+              <Field name="first_name">
+                {({field, meta}) => (
+                  <FormGroup>
+                    <Label htmlFor="firstName">
+                      First name
+                    </Label>
+                    <Input
+                      id="firstName"
+                      type="text"
+                      placeholder="e.g: Van, Andre, etc."
+                      {...field}
+                    />
+                    {meta.touched && meta.error &&
+                    <FormError>{meta.error}</FormError>}
+                  </FormGroup>
+                )}
+              </Field>
+              <Field name="last_name">
+                {({field, meta}) => (
+                  <FormGroup>
+                    <Label htmlFor="lastName">
+                      Last name
+                    </Label>
+                    <Input
+                      id="lastName"
+                      type="text"
+                      placeholder="e.g: Huynh Thi My, Mohamed, etc."
+                      {...field}
+                    />
+                    {meta.touched && meta.error &&
+                    <FormError>{meta.error}</FormError>
+                    }
+                  </FormGroup>
+                )}
+              </Field>
+              <Field name="english_name">
+                {({field, meta}) => (
+                  <FormGroup>
+                    <Label htmlFor="english_name">
+                      English name
+                    </Label>
+                    <Input
+                      id="englishName"
+                      type="text"
+                      placeholder="e.g: Ella, Peter, etc."
+                      {...field}
+                    />
+                    {meta.touched && meta.error &&
+                    <FormError>{meta.error}</FormError>}
+                  </FormGroup>
+                )}
+              </Field>
+              <Field name="gender">
+                {({field, meta}) => (
+                  <FormGroup>
+                    <Label className="mr-2" htmlFor="gender">Gender</Label>
+                    <Input className="select-box-control" id="gender" type="select" {...field}>
+                      {
+                        genderOptions.map(({stand_for, value, disabled}) => (
+                          <option key={`genderOption${value}`} disabled={disabled} value={value}>{stand_for}</option>
+                        ))
+                      }
+                    </Input>
+                    {meta.touched && meta.error &&
+                    <FormError>{meta.error}</FormError>}
+                  </FormGroup>
+                )}
+              </Field>
+            </div>
+          </Col>
+          <Col md={6}>
+            <h6>Contact</h6>
+            <div className="mb-5">
+              <Field name="phone">
+                {({field, meta}) => (
+                  <FormGroup>
+                    <Label htmlFor="phone">
+                      Phone
+                    </Label>
+                    <Input
+                      id="phone"
+                      type="text"
+                      placeholder="e.g: 0919284xxx, +84919284xxx, etc."
+                      {...field}
+                    />
+                    {meta.touched && meta.error &&
+                    <FormError>{meta.error}</FormError>}
+                  </FormGroup>
+                )}
+              </Field>
+              <Field name="address">
+                {({field, meta}) => (
+                  <FormGroup>
+                    <Label htmlFor="address">
+                      Address
+                    </Label>
+                    <Input
+                      id="address"
+                      type="text"
+                      placeholder="e.g: 455 Hoang Dieu St, Da Nang."
+                      {...field}
+                    />
+                    {meta.touched && meta.error &&
+                    <FormError>{meta.error}</FormError>}
+                  </FormGroup>
+                )}
+              </Field>
+            </div>
+          </Col>
+        </Row>
+        <div className="mt-2 text-center">
+          <Button
+            className="rounded-pill mb-2"
+            color="danger"
+            type="submit"
+            size="lg"
+            style={{fontWeight: "bold"}}
+            disabled={!isValid && submitCount >= 1}
+          >
+            Save
+          </Button>
+        </div>
+      </Form>
+    )
   };
   return (
     <>
@@ -148,32 +320,57 @@ const UserDetail = ({
           >
             <Card className="detail-card">
               {!isEditing ? (
-                <Nav tabs>
-                  {tabs.map(tab => (
-                    <NavItem key={`tab${tab.key}`}>
-                      <NavLink
-                        disabled={isActive(tab.key)}
-                        onClick={() => changeTab(tab.key)}
-                        className={activeClass(tab.key)}
+                <div className="nav-wrap">
+                  <Nav tabs>
+                    {tabs.map(tab => (
+                      <NavItem key={`tab${tab.key}`}>
+                        <NavLink
+                          disabled={isActive(tab.key)}
+                          onClick={() => changeTab(tab.key)}
+                          className={activeClass(tab.key)}
+                        >
+                          <NowUiIcon
+                            icon={tab.icon}
+                            className="align-middle mr-2"
+                          />
+                          {tab.label}
+                        </NavLink>
+                      </NavItem>
+                    ))}
+                    {
+                      !isEditing &&
+                      <NavItem className="d-flex align-items-center">
+                        <UncontrolledDropdown
+                          direction="right"
+                          className="d-block d-md-none"
+                        >
+                          <DropdownToggle color="link">
+                            <FontAwesomeIcon icon={faEllipsisH}/>
+                          </DropdownToggle>
+                          <DropdownMenu>
+                            <DropdownItem onClick={editProfile}>
+                              Edit profile
+                            </DropdownItem>
+                          </DropdownMenu>
+                        </UncontrolledDropdown>
+                      </NavItem>
+                    }
+                  </Nav>
+                  {
+                    !isEditing &&
+                    <>
+                      <Button
+                        onClick={editProfile}
+                        className="edit-profile-btn d-none d-md-inline-block"
+                        style={{borderRadius: "30px"}}
+                        color="primary"
+                        size="sm"
                       >
-                        <NowUiIcon
-                          icon={tab.icon}
-                          className="align-middle mr-2"
-                        />
-                        {tab.label}
-                      </NavLink>
-                    </NavItem>
-                  ))}
-                  {!isEditing ? (
-                    <NavItem>
-                      <NavLink>
-                      <span onClick={editProfile}>
-                        Edit
-                      </span>
-                      </NavLink>
-                    </NavItem>
-                  ) : ''}
-                </Nav>
+                        <strong>Edit profile</strong>
+                      </Button>
+                    </>
+                  }
+                </div>
               ) : ''}
               <CardBody>
                 {!isEditing ? (
@@ -274,129 +471,9 @@ const UserDetail = ({
                     <Formik
                       initialValues={initialForm}
                       onSubmit={submitHandler}
+                      validationSchema={validationSchema}
                     >
-                      {() => (
-                        <Form>
-                          <Row>
-                            <Col md={6}>
-                              <h6 className="text-center">Basic</h6>
-                              <Field name="first_name">
-                                {({field, meta}) => (
-                                  <FormGroup>
-                                    <Label htmlFor="firstName">
-                                      First name
-                                    </Label>
-                                    <Input
-                                      id="firstName"
-                                      type="text"
-                                      placeholder="e.g: Van, Andre, etc."
-                                      {...field}
-                                    />
-                                  </FormGroup>
-                                )}
-                              </Field>
-                              <Field name="last_name">
-                                {({field, meta}) => (
-                                  <FormGroup>
-                                    <Label htmlFor="lastName">
-                                      Last name
-                                    </Label>
-                                    <Input
-                                      id="lastName"
-                                      type="text"
-                                      placeholder="e.g: Huynh Thi My, Mohamed, etc."
-                                      {...field}
-                                    />
-                                  </FormGroup>
-                                )}
-                              </Field>
-                              <Field name="english_name">
-                                {({field, meta}) => (
-                                  <FormGroup>
-                                    <Label htmlFor="english_name">
-                                      English name
-                                    </Label>
-                                    <Input
-                                      id="englishName"
-                                      type="text"
-                                      placeholder="e.g: Ella, Peter, etc."
-                                      {...field}
-                                    />
-                                  </FormGroup>
-                                )}
-                              </Field>
-                              <Field name="team_id">
-                                {({field, meta}) => (
-                                  <FormGroup>
-                                    <Label htmlFor="team">
-                                      Team
-                                    </Label>
-                                    <Input
-                                      type="select"
-                                      id="team"
-                                      {...field}
-                                    >
-                                      {teamList.map(team => (
-                                        <option
-                                          defaultValue={team_id}
-                                          key={`team${team.id}`}
-                                          value={team.id}
-                                        >
-                                          {team.name}
-                                        </option>
-                                      ))}
-                                    </Input>
-                                  </FormGroup>
-                                )}
-                              </Field>
-                            </Col>
-                            <Col md={6}>
-                              <h6 className="text-center">Contact</h6>
-                              <Field name="phone">
-                                {({field, meta}) => (
-                                  <FormGroup>
-                                    <Label htmlFor="phone">
-                                      Phone
-                                    </Label>
-                                    <Input
-                                      id="phone"
-                                      type="text"
-                                      placeholder="e.g: 0919284xxx, +84919284xxx, etc."
-                                      {...field}
-                                    />
-                                  </FormGroup>
-                                )}
-                              </Field>
-                              <Field name="address">
-                                {({field, meta}) => (
-                                  <FormGroup>
-                                    <Label htmlFor="address">
-                                      Address
-                                    </Label>
-                                    <Input
-                                      id="address"
-                                      type="text"
-                                      placeholder="e.g: 455 Hoang Dieu St, Da Nang."
-                                      {...field}
-                                    />
-                                  </FormGroup>
-                                )}
-                              </Field>
-                            </Col>
-                          </Row>
-                          <div className="mt-2 text-center">
-                            <Button
-                              className="rounded-pill"
-                              color="danger"
-                              type="submit"
-                              size="lg"
-                              style={{fontWeight: "bold"}}
-                            >
-                              Save
-                            </Button>
-                          </div>
-                        </Form>
-                      )}
+                      <ProfileForm/>
                     </Formik>
                   </>
                 )}

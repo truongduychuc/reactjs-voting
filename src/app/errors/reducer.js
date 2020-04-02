@@ -1,66 +1,54 @@
 import { errorActionTypes } from "./types";
 import { v4 } from 'uuid';
+import { createReducer } from "../utils";
 
 const initialState = {
   errors: []
 };
-export const appError = (state = initialState, action) => {
-  let errors = initialState.errors;
-  switch (action.type) {
-    case errorActionTypes.PUSH_ERROR:
-      const {response} = action.error;
-      let error = {
-        message: '',
-        statusCode: '',
-        errorCode: '',
+export const appError = createReducer(initialState, {
+  [errorActionTypes.PUSH_ERROR]: (state, error) => {
+    const errors = state.errors;
+    const duplicatedError = errors.findIndex(err => {
+      for (let key in err) {
+        if (error.hasOwnProperty(key) && error[key] === err[key]) {
+          // continue
+        } else {
+          return false;
+        }
+      }
+      return true;
+    });
+    if (duplicatedError !== -1) {
+      return state;
+    } else {
+      let newError = {
+        ...error,
         id: v4()
       };
-
-      if (response) {
-        const {data, status} = response;
-        error.message = data.message ? data.message : '';
-        error.statusCode = status;
-        error.errorCode = data.error_code;
-      } else {
-        error.message = 'Something went wrong';
-        error.statusCode = 0;
-        error.errorCode = 'UNKNOWN';
-      }
-
-      const duplicatedError = errors.findIndex(err => {
-        for (let key in err) {
-          if (error.hasOwnProperty(key) && error[key] === err[key]) {
-            // continue
-          } else {
-            return false;
-          }
-        }
-        return true;
-      });
-      if (duplicatedError !== -1) {
-        return state;
-      } else {
-        errors.push(error);
-        return {
-          ...state,
-          ...{
-            errors
-          }
-        };
-      }
-    case errorActionTypes.REMOVE_ERROR:
-      errors.shift();
+      errors.push(newError);
       return {
         ...state,
-        ...{
-          errors
-        }
+        errors
       };
-    case errorActionTypes.CLEAR_ERROR:
-      return {
-        errors: []
-      };
-    default:
-      return state;
+    }
+  },
+  [errorActionTypes.REMOVE_ERROR]: (state, id) => {
+    let errors = state.errors;
+    if (id === undefined || String(id).trim() === '') {
+      errors.shift();
+    } else {
+      const errorIdx = errors.findIndex(item => item.id === id);
+      errorIdx !== -1 && errors.splice(errorIdx, 1);
+    }
+    return {
+      ...state,
+      errors
+    }
+  },
+  [errorActionTypes.CLEAR_ERROR]: state => {
+    return {
+      ...state,
+      errors: []
+    }
   }
-};
+});

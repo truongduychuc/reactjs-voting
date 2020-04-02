@@ -7,13 +7,15 @@ import React from 'react';
 import { Redirect, Route } from 'react-router-dom';
 import { connect } from "react-redux";
 
-const PrivateRoute = ({component: Component, children, authenticated, ...rest}) => {
+const PrivateRoute = (props) => {
+  const {component: Component, children, authenticated, ...rest} = props;
+
   return (
     <Route
       {...rest}
       exact
       render={routeProps =>
-        (authenticated)  ? (
+        (authenticated) ? (
           <Component {...routeProps}/>
         ) : (
           <Redirect

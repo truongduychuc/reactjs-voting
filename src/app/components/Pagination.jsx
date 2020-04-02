@@ -20,16 +20,12 @@ const _Pagination = (props) => {
   const localNumberOfPages = 1;
 
   const {
-    // eslint-disable-next-line no-unused-vars
-    ellipsisText,
     onPageChanged
   } = props;
   const perPage = toInteger(props.perPage);
   const totalRows = toInteger(props.perPage);
   const localPage = toInteger(props.page);
 
-  // eslint-disable-next-line no-unused-vars
-  const firstPage = 1;
   // find last page
   const calculatedResult = Math.ceil(totalRows / perPage);
   const numberOfPages = !calculatedResult || calculatedResult < 1 ? 1 : calculatedResult;
@@ -49,16 +45,6 @@ const _Pagination = (props) => {
     number: startNumber + i,
     classes: null
   }));
-  // eslint-disable-next-line no-unused-vars
-  const isActivePage = pageNum => pageNum === currentPage;
-  // eslint-disable-next-line no-unused-vars
-  const goToPage = page => evt => {
-    evt.preventDefault();
-    setCurrentPage(page);
-    if (onPageChanged) {
-      onPageChanged(page);
-    }
-  };
   useEffect(() => {
     setCurrentPage(sanitizeCurrentPage(localPage, localNumberOfPages));
     // eslint-disable-next-line

@@ -15,7 +15,7 @@ const LoadingBackDrop = (props) => {
     loading ? (
       <div className="loading-backdrop">
         <div className="loading-box">
-          <img src="/assets/img/loading_icon.svg" />
+          <img alt="Loading" src="/assets/img/loading_icon.svg"/>
         </div>
       </div>
     ) : null
@@ -25,7 +25,7 @@ const isEmpty = val => {
   if (val === '') {
     return true;
   }
-  if (val == undefined) {
+  if (val == null) {
     return true;
   }
   return false;
@@ -42,7 +42,7 @@ const LoginForm = () => {
           <div className="wrap-input validate-input alert-validate mb-23">
             {meta.touched && meta.error && (
               <>
-                <NowUiIcon icon="travel_info" className="validate-icon" />
+                <NowUiIcon icon="travel_info" className="validate-icon"/>
                 <span className="validate">
                 {meta.error}
                 </span>
@@ -64,7 +64,7 @@ const LoginForm = () => {
           <div className="wrap-input validate-input alert-validate" data-validate={meta.error}>
             {meta.touched && meta.error && (
               <>
-                <NowUiIcon icon="travel_info" className="validate-icon" />
+                <NowUiIcon icon="travel_info" className="validate-icon"/>
                 <span className="validate">
                 {meta.error}
                 </span>
@@ -82,9 +82,9 @@ const LoginForm = () => {
         )}
       </Field>
       <div className="helps-area">
-        <a href="#" className="forgot-pw">
+        <span className="forgot-pw">
           Forgot password?
-        </a>
+        </span>
       </div>
       <div className="container-form-btn">
         <div className="wrap-login-btn">
@@ -128,6 +128,8 @@ const Login = props => {
       logout();
     }
     clearErrors();
+    // eslint-disable-next-line
+    return () => clearErrors();
   }, []);
   useEffect(() => {
     if (authenticated) {

@@ -1,3 +1,6 @@
+import { payloadKeys } from "./app/auth";
+import { Ls } from "./_helpers";
+
 window._ = require('lodash');
 window.axios = require('axios');
 /**
@@ -9,7 +12,7 @@ window.axios = require('axios');
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 window.axios.interceptors.request.use(config => {
-  const token = localStorage.getItem('auth.access');
+  const token = Ls.get(payloadKeys.TOKEN);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

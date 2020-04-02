@@ -8,7 +8,6 @@ import { apiUrls } from "../../services";
 
 const UserProfile = () => {
   useEffect(() => {
-    // eslint-disable-next-line no-undef
     axios.get(apiUrls.API.USERS);
   }, []);
   return (

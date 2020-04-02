@@ -5,8 +5,7 @@
  */
 import React from 'react';
 import PanelHeader from "../panel-header/PanelHeader";
-import { Button, Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
-import { toastr } from "../toastr";
+import { Card, CardBody, CardHeader, Col, Row } from 'reactstrap';
 
 class Dashboard extends React.Component {
   render() {
@@ -19,13 +18,10 @@ class Dashboard extends React.Component {
               <Card>
                 <CardHeader>
                   <h5 className="card-category">
-                    Global Sales
+
                   </h5>
                 </CardHeader>
                 <CardBody>
-                  <Button onClick={() => toastr.success('Success', 'Welcome, Chuc (Gray) D. TRUONG')}>
-                    Hello
-                  </Button>
                 </CardBody>
               </Card>
             </Col>

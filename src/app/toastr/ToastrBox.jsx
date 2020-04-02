@@ -80,20 +80,21 @@ class ToastrBox extends React.Component {
 
   renderMessage = () => {
     const {
-      title,
       message,
-      options
+      options,
     } = this.props.item;
 
     return (
-      <div className="toastr-box">
-        <div className="rrt-title">
+      <div className={cn('toastr-box', 'box-message')}>
+       {/* <div className="rrt-title">
           {title}
           {this.renderCloseButton()}
-        </div>
-        <div className="rrt-text">
-          {message}
-          {options.component && this.renderSubComponent()}
+        </div>*/}
+        <div className="rrt-body">
+          <div className="rrt-text">
+            {message}
+            {options.component && this.renderSubComponent()}
+          </div>
         </div>
       </div>
     )
@@ -104,14 +105,14 @@ class ToastrBox extends React.Component {
       type,
       options,
       message,
-      title
+      // title
     } = this.props.item;
 
     const ariaAttributes = {};
 
-    if (title) {
+/*    if (title) {
       ariaAttributes['aria-labelledby'] = `dialogTitle-${this.id}`;
-    }
+    }*/
 
     if (message) {
       ariaAttributes['aria-describedby'] = `dialogDesc-${this.id}`
@@ -121,6 +122,8 @@ class ToastrBox extends React.Component {
       <div className={cn('toastr-box', type && 'box-' + type)}>
         {options.status && type === 'light' && <div className={cn('toastr-status', options.status)}/>}
         <div className="rrt-body" role="alertdialog" {...ariaAttributes}>
+          {type && <div className="rrt-icon">{this.renderIcon()}</div>
+          }
           {message && <div id={`dialogDesc-${this.id}`} className="rrt-text">{message}</div>}
           {options.component && this.renderSubComponent()}
         </div>
@@ -141,8 +144,7 @@ class ToastrBox extends React.Component {
     if (isValidElement(options.icon)) {
       return React.cloneElement(options.icon);
     }
-    const iconName = (type === 'light') ? options.icon : type;
-    return <Icon name={iconName}/>;
+    return <Icon type={type}/>;
   };
 
   renderCloseButton = () => {

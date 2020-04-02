@@ -7,3 +7,4 @@ export * from './ConfirmModal';
 export * from './Filter';
 export * from './Search'
 export * from './TableChildren'
+export * from './FormError'

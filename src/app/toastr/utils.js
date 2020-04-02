@@ -111,6 +111,8 @@ export const isString = val => {
   return typeof val == 'string';
 };
 export const mapToToastrMessage = (type, array) => {
+  // array: [title, message] as default library
+  // now i'm using only message so message will be first arg
   const obj = {};
   obj.type = type;
   obj.position = config.position;
@@ -131,14 +133,15 @@ export const mapToToastrMessage = (type, array) => {
   if (type === 'message' && !obj.options.hasOwnProperty('timeOut')) {
     obj.options.timeOut = 0;
   }
-  if (isString(array[0]) && isString(array[1])) {
-    obj.title = array[0];
-    obj.message = array[1];
-  } else if (isString(array[0]) && !isString(array[1])) {
-    obj.title = array[0];
-  } else {
-    obj.message = array[0];
-  }
+  /* if (isString(array[0]) && isString(array[1])) {
+     obj.title = array[0];
+     obj.message = array[1];
+   } else if (isString(array[0]) && !isString(array[1])) {
+     obj.title = array[0];
+   } else {
+     obj.message = array[0];
+   }*/
+  obj.message = isString(array[0]) ? array[0] : '';
   return obj;
 };
 

@@ -8,12 +8,12 @@ import { Input } from "reactstrap";
 import { _func } from "../../_helpers";
 import PropTypes from 'prop-types';
 
-const SearchInput = ({onChange, placeholder, debounce}) => {
+const SearchInput = (props) => {
+  const {onChange, placeholder, debounce} = props;
   const inputRef = useRef(null);
   const onInputChanged = !debounce ? () => {
     onChange(inputRef.current.value);
-    // eslint-disable-next-line no-undef
-  } : _.debounce(e => {
+  } : window._.debounce(() => {
     onChange(inputRef.current.value);
   }, debounce);
   return (

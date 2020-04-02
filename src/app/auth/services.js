@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {envVar, Ls} from "../../_helpers";
 import {ApiService, apiUrls} from "../../services";
+import { payloadKeys } from "./types";
 
 const CLIENT_ID = envVar.get('CLIENT_ID');
 const CLIENT_SECRET = envVar.get('CLIENT_SECRET');
@@ -57,9 +58,9 @@ export const authService = new AuthService();
 
 // save data to local
 function savePayload({access_token, expires_in, refresh_token}) {
-    Ls.set('auth.access', access_token);
-    Ls.set('auth.refresh', refresh_token);
-    Ls.set('auth.expires_in', expires_in);
+    Ls.set(payloadKeys.TOKEN, access_token);
+    Ls.set(payloadKeys.REFRESH_TOKEN, refresh_token);
+    Ls.set(payloadKeys.EXPIRES, expires_in);
 }
 
 // prepare data for returning the payload to actions
@@ -71,7 +72,7 @@ const resolvePayload = ({access_token, expires_in, refresh_token}) => ({
 
 /**Delete token and relevant info from local storage*/
 function removePayload() {
-    Ls.remove('auth.access');
-    Ls.remove('auth.refresh');
-    Ls.remove('auth.expires_in');
+    Ls.remove(payloadKeys.TOKEN);
+    Ls.remove(payloadKeys.REFRESH_TOKEN);
+    Ls.remove(payloadKeys.EXPIRES);
 }
