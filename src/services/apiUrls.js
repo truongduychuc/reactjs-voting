@@ -20,7 +20,8 @@ class ApiUrls {
     ROLE_FILTER_PROVIDER: '/api/user/role-form-resolver',
     EMAIL_EXIST: '/api/user/email-exist/',
     USERNAME_EXIST: '/api/user/username-exist/',
-    GENDERS: '/api/user/genders'
+    GENDERS: '/api/user/genders',
+    CHANGE_PASSWORD: '/api/user/actions/change-password'
   };
 
   constructor() {

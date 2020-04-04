@@ -92,7 +92,7 @@ const NewUser = (props) => {
       }).catch(err => {
         setErrors(errorService.transformValidationError(err, Object.keys(initialForm)));
         err.message && toastr.error(err.message);
-        pushError(err);
+        // pushError(err);
       }).finally(() => {
         setSubmitting(false);
       })
@@ -375,9 +375,13 @@ const NewUser = (props) => {
         phone,
         address,
         role_name,
-        team_name
+        team_name,
+        onSwitchView
       } = props;
 
+      const switchView = () => {
+        onSwitchView && onSwitchView();
+      };
       return (
         <div className="created-detail">
           <h6>
@@ -485,6 +489,9 @@ const NewUser = (props) => {
               </Col>
             </Row>
           }
+          <Button size="lg" className="rounded-pill" onClick={switchView} color="primary">
+            Create another user
+          </Button>
         </div>
       )
     };
@@ -506,7 +513,7 @@ const NewUser = (props) => {
           onSubmit={submitHandler}
         >
           {
-            !viewMode ? <UserForm/> : createdUser && <CreatedUser {...createdUser} />
+            !viewMode ? <UserForm/> : createdUser && <CreatedUser onSwitchView={() => setViewMode(false)} {...createdUser} />
           }
         </Formik>
       </>

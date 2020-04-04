@@ -17,6 +17,8 @@ import ReactPaginate from "react-paginate";
 import { bindActionCreators } from "redux";
 import { consumers as errorConsumer } from "../errors";
 import { connect } from "react-redux";
+import { faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const List = ({pushError}) => {
   // states
@@ -28,37 +30,49 @@ const List = ({pushError}) => {
     _sK: '',
   });
   const [roleOptions, setRoleOptions] = useState([]);
+  const [sortingMeta, setSortingMeta] = useState({
+    sort_column: 'id',
+    sort_desc: false
+  });
+
   const [meta, setMeta] = useState({
     per_page: 10,
     page: 1
   });
+
   const isMountedRef = useIsMountedRef();
   const isMounted = () => !!isMountedRef.current;
   // constants
   const tableFields = [
     {
       key: 'id',
-      label: '#'
+      label: '#',
+      sortable: true
     },
     {
       key: 'display_name',
-      label: 'Name'
+      label: 'Name',
+      sortable: true
     },
     {
       key: 'team_name',
       label: 'Team',
+      sortable: true
     },
     {
       key: 'role_name',
-      label: 'Role'
+      label: 'Role',
+      sortable: false
     },
     {
       key: 'status',
-      label: 'Status'
+      label: 'Status',
+      sortable: false
     },
     {
       key: 'actions',
-      label: 'Actions'
+      label: 'Actions',
+      sortable: false
     }
   ];
 
@@ -76,11 +90,51 @@ const List = ({pushError}) => {
     )
   };
 
-  const HeadingRow = ({fields}) => (
-    <tr>
-      {fields.map((item, index) => (<th key={`Column heading ${index}`}>{item.label}</th>))}
-    </tr>
-  );
+  const HeadingRow = ({fields, onHeadingClick}) => {
+    const [sortDesc, setSortDesc] = useState(false);
+    const [sortColumn, setSortColumn] = useState(fields.length > 0 ? fields[0].key : null);
+    const headingMounted = useIsMountedRef();
+
+    const handleClick = col => {
+      if (headingMounted.current) {
+        if (sortColumn !== col && sortDesc) {
+          setSortDesc(false);
+        } else {
+          setSortDesc(prev => {
+            return !prev;
+          });
+        }
+        setSortColumn(col);
+        onHeadingClick && onHeadingClick({
+          sortDesc,
+          sortColumn
+        });
+      }
+    };
+    const renderIcon = col => {
+      const icon = sortDesc ? faSortDown : faSortUp;
+      return isSortingOn(col) && <FontAwesomeIcon icon={icon}/>;
+    };
+    const isSortingOn = col => sortColumn === col;
+    return (
+      <tr>
+        {fields.map(({label, key: fieldKey, sortable}) => (
+          <th
+            style={{cursor: sortable ? "pointer" : "default"}}
+            key={`ColumnHeading${fieldKey}`}
+            onClick={() => {
+              if (sortable) {
+                handleClick(fieldKey)
+              }
+            }}
+          >
+            {label}
+            {renderIcon(fieldKey)}
+          </th>)
+        )}
+      </tr>
+    )
+  };
   const TableRow = ({fields, item, rowIndex}) => (
     <tr>
       {
@@ -158,6 +212,7 @@ const List = ({pushError}) => {
     });
     return {
       ...usedMeta,
+      ...sortingMeta,
       ...queryParams
     }
   };
@@ -170,13 +225,16 @@ const List = ({pushError}) => {
       }))
     }
   };
+  const onSortingMetaChanged = ({sortDesc, sortColumn}) => {
+    setSortingMeta({sort_desc: sortDesc, sort_column: sortColumn});
+  };
   const roleFilterProvider = () => {
     apiService.getData(apiUrls.API.ROLE_FILTER_PROVIDER).then(data => {
       if (isMounted()) {
         setRoleOptions(data);
       }
     }).catch(err => {
-      pushError(err);
+      // pushError(err);
     })
   };
 
@@ -198,7 +256,7 @@ const List = ({pushError}) => {
           }
         }
       }).catch(err => {
-      pushError(err);
+      // pushError(err);
     }).finally(() => {
       if (isMounted()) {
         setRequestingUsers(false);
@@ -217,7 +275,7 @@ const List = ({pushError}) => {
         }
       ).catch(fail => {
         switchObject.restoreValue();
-        pushError(fail);
+        // pushError(fail);
       })
     }).catch(rj => {
       switchObject.restoreValue();
@@ -297,7 +355,10 @@ const List = ({pushError}) => {
       </Row>
       <Table borderless striped responsive="md">
         <thead>
-        <HeadingRow fields={tableFields}/>
+        <HeadingRow
+          fields={tableFields}
+          onHeadingClick={onSortingMetaChanged}
+        />
         </thead>
         <tbody>
         {

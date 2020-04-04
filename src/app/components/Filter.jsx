@@ -9,7 +9,8 @@ import { Input } from "reactstrap";
 import PropTypes from "prop-types";
 import { _func } from "../../_helpers";
 
-const Filter = ({options, onSelectionChange, placeholder, inputClassName, defaultValue}) => {
+const Filter = (props) => {
+  const {options, onSelectionChange, placeholder, inputClassName, defaultValue} = props;
   const filterRef = useRef(null);
   const onChange = () => {
     onSelectionChange(toInteger(filterRef.current.value))

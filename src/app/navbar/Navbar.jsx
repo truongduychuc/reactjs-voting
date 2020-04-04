@@ -5,12 +5,17 @@
  */
 import React from "react";
 import {
+  Button,
   Collapse,
   Container,
   Dropdown,
   DropdownItem,
   DropdownMenu,
-  DropdownToggle, FormGroup, Input, Label, Modal, ModalBody,
+  DropdownToggle,
+  FormGroup,
+  Input,
+  Modal,
+  ModalBody,
   Nav,
   Navbar,
   NavbarBrand,
@@ -22,8 +27,113 @@ import { dom } from "../../_helpers";
 import { authActions } from "../auth";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Form, Formik, Field } from "formik";
+import { Field, Form, Formik, useFormikContext } from "formik";
+import { userService } from "../users/services";
+import { toastr } from "../toastr";
+import * as yup from 'yup';
+import { FormError } from "../components";
 
+const NavbarContext = React.createContext({});
+
+const ChangePassword = props => {
+  const {onCancel} = props;
+  const initialForm = {
+    current_password: '',
+    password: '',
+    password_confirmation: ''
+  };
+  const validationSchema = yup.object().shape({
+    current_password: yup.string().required('Current password is required'),
+    password: yup.string().required('New password is required'),
+    password_confirmation: yup.string().required('Please confirm your new password')
+  });
+  const submitChangePassword = (data, {setErrors, setSubmitting}) => {
+    setSubmitting(true);
+    userService.changePassword(data).then(success => {
+      toastr.success(success.message);
+    }).catch(error => {
+      toastr.error(error.message);
+    }).finally(() => {
+      setSubmitting(false);
+    });
+  };
+  const PasswordForm = () => {
+    const {submitCount, isValid} = useFormikContext();
+    return (
+      <Form>
+        <h3>Change password</h3>
+        <Field name="current_password">
+          {({field, meta}) => (
+            <FormGroup>
+              <Input
+                type="password" {...field}
+                placeholder="Current password"
+              />
+              {
+                meta.touched && meta.error &&
+                <FormError>{meta.error}</FormError>
+              }
+            </FormGroup>
+          )}
+        </Field>
+        <Field name="password">
+          {({field, meta}) => (
+            <FormGroup>
+              <Input
+                type="password" {...field}
+                placeholder="New password"
+              />
+              {
+                meta.touched && meta.error &&
+                <FormError>{meta.error}</FormError>
+              }
+            </FormGroup>
+          )}
+        </Field>
+        <Field name="password_confirmation">
+          {({field, meta}) => (
+            <FormGroup>
+              <Input
+                type="password" {...field}
+                placeholder="Type new password again to confirm"
+              />
+              {
+                meta.touched && meta.error &&
+                <FormError>{meta.error}</FormError>
+              }
+            </FormGroup>
+          )}
+        </Field>
+        <Button
+          type="submit"
+          block
+          color="primary"
+          disabled={submitCount >= 1 && !isValid}
+        >
+          Save
+        </Button>
+        <NavbarContext.Consumer>
+          {value => (
+            <Button type="button" onClick={() => {
+              value.onCancelChangingPassword && value.onCancelChangingPassword();
+            }} block color="link">
+              Cancel
+            </Button>
+          )}
+        </NavbarContext.Consumer>
+      </Form>
+    )
+  };
+  return (
+    <Formik
+      initialValues={initialForm}
+      onSubmit={submitChangePassword}
+      validationSchema={validationSchema}
+    >
+      <PasswordForm/>
+    </Formik>
+  );
+};
 
 class DemoNavbar extends React.Component {
   state = {
@@ -34,11 +144,6 @@ class DemoNavbar extends React.Component {
   };
   sidebarToggle = React.createRef();
   _isMounted = false;
-  initialForm = {
-    current_password: '',
-    password: '',
-    password_confirmation: ''
-  };
 
   componentDidMount() {
     window.onresize = this.updateColor;
@@ -130,29 +235,15 @@ class DemoNavbar extends React.Component {
           </Collapse>
           <Modal
             isOpen={this.state.isModalOpen}
-            size="lg"
             centered
             toggle={this.toggleModal}
           >
-            <ModalBody>
-              <Formik
-                initialValues={this.initialForm}
-              >
-                {() => (
-                  <Form>
-                    <Field name="current_password">
-                      {({field, meta}) => (
-                        <FormGroup>
-                          <Label>
-                            Current password
-                          </Label>
-                          <Input type="password" {...field} />
-                        </FormGroup>
-                      )}
-                    </Field>
-                  </Form>
-                )}
-              </Formik>
+            <ModalBody style={{padding: "2rem"}}>
+              <NavbarContext.Provider value={{
+                onCancelChangingPassword: this.onCancelChangingPassword
+              }}>
+                <ChangePassword/>
+              </NavbarContext.Provider>
             </ModalBody>
           </Modal>
         </Container>
@@ -197,6 +288,15 @@ class DemoNavbar extends React.Component {
       ...prev,
       isModalOpen: !prev.isModalOpen
     }));
+  };
+  closeModal = () => {
+    this.setState(prev => ({
+      ...prev,
+      isModalOpen: false
+    }));
+  };
+  onCancelChangingPassword = () => {
+    this.closeModal();
   };
   getBrand = () => {
     const {location} = this.props;

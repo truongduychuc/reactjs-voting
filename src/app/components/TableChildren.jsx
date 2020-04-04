@@ -84,34 +84,8 @@ PerPageFilter.defaultProps = {
   defaultOption: 10
 };
 
-const MetaDetail = (props) => {
-  const {
-    tag: Tag,
-    perPage,
-    from,
-    to,
-    lastPage,
-    total
-  } = props;
-  return (
-    <Tag>
-
-    </Tag>
-  )
-};
-
-MetaDetail.defaultProps = {
-  tag: 'div',
-  perPage: 10,
-  from: 1,
-  to: 1,
-  lastPage: 1,
-  total: 1
-};
-
 export {
   TableRowsSkeleton,
   EmptyTableRow,
-  PerPageFilter,
-  MetaDetail
+  PerPageFilter
 }

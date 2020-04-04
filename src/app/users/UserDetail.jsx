@@ -143,7 +143,7 @@ const UserDetail = (props) => {
         setGenderOptions(genders);
       }
     }).catch(error => {
-      pushError(error);
+      // pushError(error);
     })
   };
 

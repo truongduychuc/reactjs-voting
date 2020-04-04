@@ -20,6 +20,7 @@ const _Pagination = (props) => {
   const localNumberOfPages = 1;
 
   const {
+    // eslint-disable-next-line no-unused-vars
     onPageChanged
   } = props;
   const perPage = toInteger(props.perPage);

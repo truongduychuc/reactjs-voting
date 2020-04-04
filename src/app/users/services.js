@@ -36,6 +36,9 @@ const userService = {
   },
   getGenderOptions() {
     return apiService.getData(apiUrls.API.GENDERS);
+  },
+  changePassword(data) {
+    return apiService.patch(apiUrls.API.CHANGE_PASSWORD, data);
   }
 };
 

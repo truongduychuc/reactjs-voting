@@ -1,5 +1,6 @@
 import axios from 'axios';
 import {errorService} from './error';
+import {consumers as errorConsumers} from "../app/errors";
 
 export class ApiService {
   get(url, params) {
@@ -7,7 +8,9 @@ export class ApiService {
       axios.get(url, {params}).then(res => {
         resolve(res.data);
       }).catch(err => {
-        reject(errorService.transformErrorResponse(err));
+        const _error = errorService.transformErrorResponse(err);
+        errorConsumers.add(_error);
+        reject(_error);
       })
     })
   }
@@ -18,7 +21,9 @@ export class ApiService {
       axios.get(url, {params}).then(res => {
         resolve(res.data.data);
       }).catch(err => {
-        reject(errorService.transformErrorResponse(err));
+        const _error = errorService.transformErrorResponse(err);
+        errorConsumers.add(_error);
+        reject(_error);
       })
     })
   }
@@ -28,7 +33,9 @@ export class ApiService {
       axios.post(url, data).then(res => {
         resolve(res.data);
       }).catch(err => {
-        reject(errorService.transformErrorResponse(err));
+        const _error = errorService.transformErrorResponse(err);
+        errorConsumers.add(_error);
+        reject(_error);
       })
     })
   }
@@ -38,7 +45,9 @@ export class ApiService {
       axios.patch(url, data).then(res => {
         resolve(res.data);
       }).catch(err => {
-        reject(errorService.transformErrorResponse(err));
+        const _error = errorService.transformErrorResponse(err);
+        errorConsumers.add(_error);
+        reject(_error);
       })
     })
   }
@@ -48,7 +57,9 @@ export class ApiService {
       axios.put(url, data).then(res => {
         resolve(res.data);
       }).catch(err => {
-        reject(errorService.transformErrorResponse(err));
+        const _error = errorService.transformErrorResponse(err);
+        errorConsumers.add(_error);
+        reject(_error);
       })
     })
   }
