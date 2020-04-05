@@ -3,11 +3,15 @@
  using WebStorm at
  14:22 on 22-Mar-20
  */
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { range } from "../../utils";
 import PropTypes from "prop-types";
 import { toInteger } from "../../utils/number";
 import { _func } from "../../_helpers";
+import { useIsMountedRef } from "../../hooks";
+import { faSortDown, faSortUp } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import cn from 'classnames';
 
 const EmptyTableRow = ({cols}) => (
   <tr>
@@ -84,8 +88,65 @@ PerPageFilter.defaultProps = {
   defaultOption: 10
 };
 
+const HeadingRow = (props) => {
+  const {fields, onSortingChanged} = props;
+  const [sortDesc, setSortDesc] = useState(false);
+  const [sortColumn, setSortColumn] = useState(fields.length > 0 ? fields[0].key : null);
+  const headingMounted = useIsMountedRef();
+
+  const handleClick = col => {
+    if (headingMounted.current) {
+      let intendSortDesc = sortDesc;
+      setSortDesc(prev => {
+        intendSortDesc = sortColumn !== col ? false : !prev;
+        return intendSortDesc;
+      });
+      setSortColumn(col);
+      onSortingChanged && onSortingChanged({
+        sortColumn: col,
+        sortDesc: intendSortDesc
+      });
+    }
+  };
+  const renderIcon = col => {
+    const icon = sortDesc ? faSortDown : faSortUp;
+    return isSortingOn(col) && <FontAwesomeIcon icon={icon}/>;
+  };
+  const isSortingOn = col => sortColumn === col;
+  return (
+    <tr>
+      {fields.map(({label, key: fieldKey, sortable}) => (
+        <th
+          className={sortable ? 'sortable': ''}
+          key={`ColumnHeading${fieldKey}`}
+          onClick={() => {
+            sortable && handleClick(fieldKey);
+          }}
+          title={sortable ? `Click to sort ${sortDesc ? 'descending' : 'ascending'} by ${label}` : ''}
+        >
+          <div className="heading-wrapper">
+            {label}
+            {renderIcon(fieldKey)}
+          </div>
+        </th>)
+      )}
+    </tr>
+  )
+};
+
+HeadingRow.defaultProps = {
+  fields: [],
+  onSortingChanged: _func.noop
+};
+
+HeadingRow.propTypes = {
+  fields: PropTypes.array,
+  onSortingChanged: PropTypes.func
+};
+
 export {
   TableRowsSkeleton,
   EmptyTableRow,
-  PerPageFilter
+  PerPageFilter,
+  HeadingRow
 }

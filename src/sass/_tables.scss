@@ -34,4 +34,13 @@
       }
     }
   }
+
+  .heading-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  th.sortable {
+    cursor: pointer;
+  }
 }

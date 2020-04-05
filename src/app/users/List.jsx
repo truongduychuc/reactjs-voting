@@ -19,6 +19,7 @@ import { consumers as errorConsumer } from "../errors";
 import { connect } from "react-redux";
 import { faSortUp, faSortDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { HeadingRow } from "../components/TableChildren";
 
 const List = ({pushError}) => {
   // states
@@ -26,12 +27,12 @@ const List = ({pushError}) => {
   const [isRequestingUsers, setRequestingUsers] = useState(false);
   const [firstTimeLoaded, setFirstTimeLoaded] = useState(false);
   const [queryParams, setQueryParams] = useState({
-    _rK: '',
-    _sK: '',
+    _rK: '', // role key
+    _sK: '', // search key
   });
   const [roleOptions, setRoleOptions] = useState([]);
   const [sortingMeta, setSortingMeta] = useState({
-    sort_column: 'id',
+    sort_col: 'id',
     sort_desc: false
   });
 
@@ -52,12 +53,12 @@ const List = ({pushError}) => {
     {
       key: 'display_name',
       label: 'Name',
-      sortable: true
+      sortable: false
     },
     {
       key: 'team_name',
       label: 'Team',
-      sortable: true
+      sortable: false
     },
     {
       key: 'role_name',
@@ -90,51 +91,7 @@ const List = ({pushError}) => {
     )
   };
 
-  const HeadingRow = ({fields, onHeadingClick}) => {
-    const [sortDesc, setSortDesc] = useState(false);
-    const [sortColumn, setSortColumn] = useState(fields.length > 0 ? fields[0].key : null);
-    const headingMounted = useIsMountedRef();
 
-    const handleClick = col => {
-      if (headingMounted.current) {
-        if (sortColumn !== col && sortDesc) {
-          setSortDesc(false);
-        } else {
-          setSortDesc(prev => {
-            return !prev;
-          });
-        }
-        setSortColumn(col);
-        onHeadingClick && onHeadingClick({
-          sortDesc,
-          sortColumn
-        });
-      }
-    };
-    const renderIcon = col => {
-      const icon = sortDesc ? faSortDown : faSortUp;
-      return isSortingOn(col) && <FontAwesomeIcon icon={icon}/>;
-    };
-    const isSortingOn = col => sortColumn === col;
-    return (
-      <tr>
-        {fields.map(({label, key: fieldKey, sortable}) => (
-          <th
-            style={{cursor: sortable ? "pointer" : "default"}}
-            key={`ColumnHeading${fieldKey}`}
-            onClick={() => {
-              if (sortable) {
-                handleClick(fieldKey)
-              }
-            }}
-          >
-            {label}
-            {renderIcon(fieldKey)}
-          </th>)
-        )}
-      </tr>
-    )
-  };
   const TableRow = ({fields, item, rowIndex}) => (
     <tr>
       {
@@ -183,7 +140,12 @@ const List = ({pushError}) => {
     getUserList();
     return () => setRequestingUsers(false);
     // eslint-disable-next-line
-  }, [meta.page, isMountedRef.current, queryParams, meta.per_page]);
+  }, [
+    meta.page,
+    queryParams,
+    meta.per_page,
+    sortingMeta
+  ]);
 
   useEffect(() => {
     roleFilterProvider();
@@ -226,7 +188,10 @@ const List = ({pushError}) => {
     }
   };
   const onSortingMetaChanged = ({sortDesc, sortColumn}) => {
-    setSortingMeta({sort_desc: sortDesc, sort_column: sortColumn});
+    setSortingMeta({
+      sort_desc: sortDesc,
+      sort_col: sortColumn
+    });
   };
   const roleFilterProvider = () => {
     apiService.getData(apiUrls.API.ROLE_FILTER_PROVIDER).then(data => {
@@ -357,7 +322,7 @@ const List = ({pushError}) => {
         <thead>
         <HeadingRow
           fields={tableFields}
-          onHeadingClick={onSortingMetaChanged}
+          onSortingChanged={onSortingMetaChanged}
         />
         </thead>
         <tbody>

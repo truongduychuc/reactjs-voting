@@ -216,3 +216,20 @@
     background-color: $white-color !important;
   }
 }
+
+.modal {
+  .password-form-wrapper.submitting {
+    position: relative;
+
+    &:after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      content: "";
+      background-color: $submitting-overlay-color;
+      z-index: 2;
+    }
+  }
+}

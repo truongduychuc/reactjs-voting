@@ -54,7 +54,7 @@ const Login = ({loggingIn, authenticated, ...props}) => {
     email: string().trim().email().required('Email is required'),
     password: string().trim().required('Password is required')
   });
-  const submitHandler = ({email, password}, {setStatus, setSubmitting, setErrors}) => {
+  const submitHandler = ({email, password}, {setStatus, setSubmitting}) => {
     setStatus();
     setSubmitting(true);
     props.login(email, password);

@@ -32,95 +32,120 @@ import { userService } from "../users/services";
 import { toastr } from "../toastr";
 import * as yup from 'yup';
 import { FormError } from "../components";
+import { errorService } from "../../services";
+import cn from 'classnames';
 
 const NavbarContext = React.createContext({});
 
 const ChangePassword = props => {
-  const {onCancel} = props;
+  const {onSuccess} = props;
   const initialForm = {
     current_password: '',
     password: '',
     password_confirmation: ''
   };
+  const equalTo = (ref, msg) => {
+    return yup.mixed().test({
+      name: 'equalTo',
+      exclusive: false,
+      message: msg || '${path} must be the same as ${reference}',
+      params: {
+        reference: ref.path
+      },
+      test: function (value) {
+        return value === this.resolve(ref);
+      }
+    })
+  };
+  yup.addMethod(yup.string, 'equalTo', equalTo);
   const validationSchema = yup.object().shape({
-    current_password: yup.string().required('Current password is required'),
-    password: yup.string().required('New password is required'),
-    password_confirmation: yup.string().required('Please confirm your new password')
+    current_password: yup.string()
+      .required('Current password is required'),
+    password: yup.string()
+      .required('New password is required')
+      .min(6)
+      .max(255),
+    password_confirmation: yup.string()
+      .required('Please confirm your new password').equalTo(yup.ref('password'), 'Password confirmation must match with new password')
   });
   const submitChangePassword = (data, {setErrors, setSubmitting}) => {
     setSubmitting(true);
     userService.changePassword(data).then(success => {
       toastr.success(success.message);
+      onSuccess && onSuccess();
     }).catch(error => {
+      setErrors(errorService.transformValidationError(error, Object.keys(data)));
       toastr.error(error.message);
     }).finally(() => {
       setSubmitting(false);
     });
   };
   const PasswordForm = () => {
-    const {submitCount, isValid} = useFormikContext();
+    const {submitCount, isValid, isSubmitting} = useFormikContext();
     return (
       <Form>
         <h3>Change password</h3>
-        <Field name="current_password">
-          {({field, meta}) => (
-            <FormGroup>
-              <Input
-                type="password" {...field}
-                placeholder="Current password"
-              />
-              {
-                meta.touched && meta.error &&
-                <FormError>{meta.error}</FormError>
-              }
-            </FormGroup>
-          )}
-        </Field>
-        <Field name="password">
-          {({field, meta}) => (
-            <FormGroup>
-              <Input
-                type="password" {...field}
-                placeholder="New password"
-              />
-              {
-                meta.touched && meta.error &&
-                <FormError>{meta.error}</FormError>
-              }
-            </FormGroup>
-          )}
-        </Field>
-        <Field name="password_confirmation">
-          {({field, meta}) => (
-            <FormGroup>
-              <Input
-                type="password" {...field}
-                placeholder="Type new password again to confirm"
-              />
-              {
-                meta.touched && meta.error &&
-                <FormError>{meta.error}</FormError>
-              }
-            </FormGroup>
-          )}
-        </Field>
-        <Button
-          type="submit"
-          block
-          color="primary"
-          disabled={submitCount >= 1 && !isValid}
-        >
-          Save
-        </Button>
-        <NavbarContext.Consumer>
-          {value => (
-            <Button type="button" onClick={() => {
-              value.onCancelChangingPassword && value.onCancelChangingPassword();
-            }} block color="link">
-              Cancel
-            </Button>
-          )}
-        </NavbarContext.Consumer>
+        <div className={cn('password-form-wrapper', isSubmitting && 'submitting')}>
+          <Field name="current_password">
+            {({field, meta}) => (
+              <FormGroup>
+                <Input
+                  type="password" {...field}
+                  placeholder="Current password"
+                />
+                {
+                  meta.touched && meta.error &&
+                  <FormError>{meta.error}</FormError>
+                }
+              </FormGroup>
+            )}
+          </Field>
+          <Field name="password">
+            {({field, meta}) => (
+              <FormGroup>
+                <Input
+                  type="password" {...field}
+                  placeholder="New password"
+                />
+                {
+                  meta.touched && meta.error &&
+                  <FormError>{meta.error}</FormError>
+                }
+              </FormGroup>
+            )}
+          </Field>
+          <Field name="password_confirmation">
+            {({field, meta}) => (
+              <FormGroup>
+                <Input
+                  type="password" {...field}
+                  placeholder="Type new password again to confirm"
+                />
+                {
+                  meta.touched && meta.error &&
+                  <FormError>{meta.error}</FormError>
+                }
+              </FormGroup>
+            )}
+          </Field>
+          <Button
+            type="submit"
+            block
+            color="primary"
+            disabled={submitCount >= 1 && !isValid}
+          >
+            Save
+          </Button>
+          <NavbarContext.Consumer>
+            {({onCancelChangingPassword}) => (
+              <Button type="button" onClick={() => {
+                onCancelChangingPassword && onCancelChangingPassword();
+              }} block color="link">
+                Cancel
+              </Button>
+            )}
+          </NavbarContext.Consumer>
+        </div>
       </Form>
     )
   };
@@ -130,7 +155,7 @@ const ChangePassword = props => {
       onSubmit={submitChangePassword}
       validationSchema={validationSchema}
     >
-      <PasswordForm/>
+      <PasswordForm />
     </Formik>
   );
 };
@@ -242,7 +267,7 @@ class DemoNavbar extends React.Component {
               <NavbarContext.Provider value={{
                 onCancelChangingPassword: this.onCancelChangingPassword
               }}>
-                <ChangePassword/>
+                <ChangePassword onSuccess={this.closeModal}/>
               </NavbarContext.Provider>
             </ModalBody>
           </Modal>

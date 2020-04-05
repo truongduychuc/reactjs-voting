@@ -1,13 +1,5 @@
 import { userActionTypes } from "./types";
-
-const initialState = {
-  requesting: false,
-  users: [],
-  meta: {
-    page: 1,
-    per_page: 10
-  }
-};
+import { createReducer } from "../utils";
 
 const initialUser = {
   current: {
@@ -24,57 +16,16 @@ const initialUser = {
   error: {}
 };
 
-export const authUser = (state = initialUser, action) => {
-  switch (action.type) {
-    case userActionTypes.REQUEST_AUTH_USER:
-      return {
-        ...state,
-        ...{
-          requesting: true
-        }
-      };
-    case userActionTypes.GET_AUTH_USER:
-      return {
-        ...state,
-        ...{
-          current: action.user,
-          success: true,
-          requesting: false,
-        }
-      };
-    case userActionTypes.ERROR_AUTH_USER:
-      return initialUser;
-    default:
-      return state;
-  }
-};
-
-export const usersReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case userActionTypes.REQUEST_USER_LIST:
-      return {
-        ...state,
-        ...{
-          requesting: true
-        }
-      };
-
-    case userActionTypes.SUCCESS_GET_USER_LIST:
-      return {
-        ...state,
-        ...{
-          users: action.users,
-          meta: action.meta
-        }
-      };
-    case userActionTypes.ERROR_AUTH_USER:
-      return {
-        ...state,
-        ...{
-          error: action.error
-        }
-      };
-    default:
-      return state;
-  }
-};
+export const authUser = createReducer(initialUser, {
+  [userActionTypes.REQUEST_AUTH_USER]: state => ({
+    ...state,
+    requesting: true
+  }),
+  [userActionTypes.GET_AUTH_USER]: (state, user) => ({
+    ...state,
+    current: user,
+    success: true,
+    requesting: false
+  }),
+  [userActionTypes.ERROR_AUTH_USER]: state => initialUser
+});

@@ -14,6 +14,17 @@ export interface PerPageOption {
 }
 
 export declare const PerPageFilter: React.ComponentType<{
-  options: Array<PerPageOption>;
-  onSelectionChange?: (value: number) => void;
+  options: Array<PerPageOption>,
+  onSelectionChange?: (value: number) => void
+}>;
+
+type TableField = {
+  key: string,
+  label: string,
+  sortable?: boolean
+}
+
+export declare const HeadingRow: React.ComponentType<{
+  fields: Array<TableField>,
+  onSortingChanged?: (value: object) => void
 }>;
